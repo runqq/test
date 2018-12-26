@@ -1,0 +1,92 @@
+//
+//  PrefixHeader.pch
+//  bingqiu-ios
+//
+//  Created by MacBook Air on 2018/10/15.
+//  Copyright © 2018年 MacBook Air. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#import "BaseViewController.h"
+#import "UINavigationBar+navAlpha.h"
+#import "UIColor+JYColor.h"
+#import "Masonry.h"
+#import "AFNetworking.h"
+#import "Public/UIButton+MyCustomBtn.h"
+#import "YYModel.h"
+#import "Public/HttpTool/HttpTool.h"
+#import "Header.h"
+#import "UIImageView+WebCache.h"
+#import "NSObject+BRHUD.h"
+#import "Public/MD5/Encryption.h"
+#import <RealReachability/RealReachability.h>
+#import "LoginOut.h"
+#import <ZJChickTool/ZJChickTools.h>
+#import <MJRefresh/MJRefresh.h>
+#import <MJExtension/MJExtension.h>
+#import "HMPublickBlockDefine.h"
+#import "SVProgressHUD.h"
+
+#define BQLog(fmt, ...) NSLog((@"[%s[line:%d]] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define WeakSelf __weak typeof(self) weakSelf = self;
+#define User_Default [NSUserDefaults standardUserDefaults]
+
+#define GLobalRealReachability [RealReachability sharedInstance]
+
+#define SCREEN_W [UIScreen mainScreen].bounds.size.width
+#define SCREEN_H [UIScreen mainScreen].bounds.size.height
+
+//苹方字体
+#define BQFONT(fontSize)  [UIFont fontWithName:@"PingFangSC-Regular" size:(fontSize)]
+//苹方light字体
+#define BQLightFONT(fontSize)  [UIFont fontWithName:@"PingFangSC-Light" size:(fontSize)]
+//苹方加粗字体
+#define BQBOLDFONT(fontSize) [UIFont fontWithName:@"PingFangSC-Semibold" size:(fontSize)]
+
+#define kDevice_Is_iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define STATUS_BAR_HEIGHT ((kDevice_Is_iPhoneX) ? 44.0f : 20.0f)
+#define NAVIGATION_BAR_HEIGHT ((kDevice_Is_iPhoneX) ? 88.0f : 64.0f)
+#define TABBAR_BAR_HEIGHT ((kDevice_Is_iPhoneX) ? 83.0f : 49.0f)
+
+
+#define kColorRGB(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
+
+
+/*
+ 
+ iPhone5    1134*640
+ iPhone5S   1136*640
+ 
+ iPhone6/iPhone6s/iPhone7/iPhone8   1334*750
+ iPhone6P/iPhone7P/iPhone8P         1920*1080
+ 
+ iPhoneX    2436*1125
+ iPhoneXr  1792*828
+ 
+ */
+// 判断iPhone6s
+#define IS_IPHONE_6s ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(750, 1334), [[UIScreen mainScreen] currentMode].size) : NO)
+// 判断iPhoneX
+#define IS_IPHONE_X ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+// 判断iPHoneXr
+#define IS_IPHONE_Xr ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(828, 1792), [[UIScreen mainScreen] currentMode].size) : NO)
+// 判断iPhoneXs
+#define IS_IPHONE_Xs ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size)  : NO)
+// 判断iPhoneXs Max
+#define IS_IPHONE_Xs_Max ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2688), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define Height_StatusBar ((IS_IPHONE_X == YES || IS_IPHONE_Xr == YES || IS_IPHONE_Xs == YES || IS_IPHONE_Xs_Max == YES) ? 44.0 : 20.0)
+#define Height_NavBar ((IS_IPHONE_X == YES || IS_IPHONE_Xr == YES || IS_IPHONE_Xs == YES || IS_IPHONE_Xs_Max == YES) ? 88.0 : 64.0)
+#define Height_TabBar ((IS_IPHONE_X == YES || IS_IPHONE_Xr == YES || IS_IPHONE_Xs == YES || IS_IPHONE_Xs_Max == YES) ? 83.0 : 49.0)
+
+
+
+
+
+
+#endif /* PrefixHeader_pch */
