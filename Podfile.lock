@@ -31,7 +31,7 @@ DEPENDENCIES:
   - ZJChickTool
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - Bugly
     - FDFullscreenPopGesture
     - IQKeyboardManager
@@ -59,4 +59,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 9a12429d86d008856a2501b1ac67c3b4932a1d95
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3

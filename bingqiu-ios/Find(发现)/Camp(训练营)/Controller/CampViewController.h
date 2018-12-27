@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CampViewController : BaseViewController
+@interface CampViewController : UIViewController
 
 @end
 
