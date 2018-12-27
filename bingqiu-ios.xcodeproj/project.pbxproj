@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		79478C7921D4AC2C00642780 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79478C7821D4AC2C00642780 /* Info.plist */; };
 		7954926E21BFE09000D986E4 /* TypeScreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7954926A21BFE04D00D986E4 /* TypeScreenView.m */; };
 		7954926F21BFE09000D986E4 /* TypeScreenTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7954926D21BFE04D00D986E4 /* TypeScreenTableViewCell.m */; };
 		7954927821BFE22E00D986E4 /* XLCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 7954927321BFE22E00D986E4 /* XLCircle.m */; };
@@ -297,6 +298,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		79478C7821D4AC2C00642780 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		7954926A21BFE04D00D986E4 /* TypeScreenView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TypeScreenView.m; sourceTree = "<group>"; };
 		7954926B21BFE04D00D986E4 /* TypeScreenTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeScreenTableViewCell.h; sourceTree = "<group>"; };
 		7954926C21BFE04D00D986E4 /* TypeScreenView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeScreenView.h; sourceTree = "<group>"; };
@@ -813,7 +815,6 @@
 		D0DBEFBE217467E40083BAA9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D0DBEFC0217467E50083BAA9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D0DBEFC3217467E50083BAA9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D0DBEFC5217467E50083BAA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0DBEFC6217467E50083BAA9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D0DBEFCD217468070083BAA9 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		D0DBEFD121746C660083BAA9 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -2101,6 +2102,7 @@
 		D0DBEFB6217467E40083BAA9 /* bingqiu-ios */ = {
 			isa = PBXGroup;
 			children = (
+				79478C7821D4AC2C00642780 /* Info.plist */,
 				D08E76EE217DD3D3003E6E33 /* Public */,
 				D02F07C32174A29C007F0349 /* 第三方 */,
 				D02F07BB21749DD8007F0349 /* BaseViewController */,
@@ -2116,7 +2118,6 @@
 				D0DBEFBD217467E40083BAA9 /* Main.storyboard */,
 				D0DBEFC0217467E50083BAA9 /* Assets.xcassets */,
 				D0DBEFC2217467E50083BAA9 /* LaunchScreen.storyboard */,
-				D0DBEFC5217467E50083BAA9 /* Info.plist */,
 				D0DBEFC6217467E50083BAA9 /* main.m */,
 				D0DBEFCD217468070083BAA9 /* PrefixHeader.pch */,
 				D0C16EE221803426007ABD7E /* Header.h */,
@@ -2396,6 +2397,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79478C7921D4AC2C00642780 /* Info.plist in Resources */,
 				D014BF5621A255DE00995DA3 /* ZZGradientProgress.bundle in Resources */,
 				D0DBEFC4217467E50083BAA9 /* LaunchScreen.storyboard in Resources */,
 				D0DBEFC1217467E50083BAA9 /* Assets.xcassets in Resources */,
@@ -2891,7 +2893,7 @@
 					"\"${PODS_ROOT}/Headers/Public/YYModel\"",
 					"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include",
 				);
-				INFOPLIST_FILE = "bingqiu-ios/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2927,7 +2929,7 @@
 					"\"${PODS_ROOT}/Headers/Public/YYModel\"",
 					"$(OBJROOT)/UninstalledProducts/$(PLATFORM_NAME)/include",
 				);
-				INFOPLIST_FILE = "bingqiu-ios/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
