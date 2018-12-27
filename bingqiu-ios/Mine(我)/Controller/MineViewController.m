@@ -67,7 +67,7 @@
 @property(nonatomic,strong)BQSmallCardViewModel *bqViewModel;
 @property(nonatomic,strong)BQSmallCardDetailModel *bqDetailModel;
 @property(nonatomic,strong)NSMutableArray <BQSmallCardDetailModel *>*data;
-
+@property(nonatomic,strong) UIImage *headImg;
 
 @end
 
@@ -275,6 +275,11 @@
                 NSString *photoStr = self.myHomePageDetailModel.photo;
                 [self.headV.headImg sd_setImageWithURL:[NSURL URLWithString:photoStr] placeholderImage:[UIImage imageNamed:@"photo_woman_nor"]];
             }
+            if (self.headImg != nil) {
+                //加载内存图片
+                self.headV.headImg.image = self.headImg;
+            }
+            
             // 用户姓名
             self.headV.nameLab.text = self.myHomePageDetailModel.name;
             // 是否是会员
@@ -348,9 +353,13 @@
     if ([User_Default objectForKey:@"myjsession"]) {
         
         StuInforController *stuInfoVC = [[StuInforController alloc]init];
+        stuInfoVC.headImg = self.headV.headImg.image;
         //实现回传头像的block
         stuInfoVC.headerImgBlock = ^(UIImage * _Nonnull img) {
             self.headV.headImg.image = img;
+            
+            //内存缓存
+            self.headImg = img;
         };
         
         UINavigationController *stuInfoNav = [[UINavigationController alloc]initWithRootViewController:stuInfoVC];

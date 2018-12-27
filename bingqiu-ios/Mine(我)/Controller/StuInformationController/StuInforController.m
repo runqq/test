@@ -192,12 +192,20 @@
             }
             _stuInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
             
+            if (self.headImg != nil) {
+                _stuInfoCell.headImg.image = self.headImg;
+            }
             if ([self.myMemberInfoDetailModel.genderText isEqualToString:@"男"]) {
                 NSString *photoStr = self.myMemberInfoDetailModel.photo;
                 [_stuInfoCell.headImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",photoStr]] placeholderImage:[UIImage imageNamed:@"photo_man_nor"]];
             }else{
                 NSString *photoStr = self.myMemberInfoDetailModel.photo;
                 [_stuInfoCell.headImg sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",photoStr]] placeholderImage:[UIImage imageNamed:@"photo_woman_nor"]];
+            }
+            
+            if (self.headImg != nil) {
+                //加载内存图片
+                _stuInfoCell.headImg.image = self.headImg;
             }
             
             return _stuInfoCell;
