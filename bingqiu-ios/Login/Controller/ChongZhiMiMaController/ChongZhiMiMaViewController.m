@@ -13,6 +13,7 @@
 
 @interface ChongZhiMiMaViewController ()
 
+@property(nonatomic,strong)UIView *bgView;
 @property(nonatomic,strong)UILabel *titleLab;
 @property(nonatomic,strong)UITextField *textTF;
 @property(nonatomic,strong)UIButton *confirmBtn;
@@ -38,16 +39,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
+    self.view.backgroundColor = [UIColor whiteColor];
     
     self.navigationItem.titleView = self.navTitle;
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtnClick:)];
     
-    [self.view addSubview:self.titleLab];
-    [self.view addSubview:self.textTF];
-    [self.view addSubview:self.confirmBtn];
+    [self.view addSubview:self.bgView];
+    [self.bgView addSubview:self.titleLab];
+    [self.bgView addSubview:self.textTF];
+    [self.bgView addSubview:self.confirmBtn];
     
     [self setLayOut];
     
@@ -62,27 +65,34 @@
     
     __weak typeof(self) weakself = self;
     [self.titleLab mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(weakself.view.mas_top).with.offset(NAVIGATION_BAR_HEIGHT + 20);
-        make.left.equalTo(weakself.view.mas_left).with.offset(15);
+        make.top.equalTo(weakself.bgView.mas_top).with.offset(20);
+        make.left.equalTo(weakself.bgView.mas_left).with.offset(15);
     }];
     [self.textTF mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.titleLab.mas_bottom).with.offset(11);
-        make.left.equalTo(weakself.view.mas_left).with.offset(0);
+        make.left.equalTo(weakself.bgView.mas_left).with.offset(0);
         make.size.mas_equalTo(CGSizeMake(SCREEN_W, 50));
     }];
     [self.confirmBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.textTF.mas_bottom).with.offset(40);
-        make.centerX.equalTo(weakself.view.mas_centerX);
+        make.centerX.equalTo(weakself.bgView.mas_centerX);
         make.size.mas_equalTo(CGSizeMake(345, 48));
         
     }];
 }
 #pragma mark --> 懒加载
+-(UIView *)bgView{
+    if (!_bgView) {
+        _bgView = [[UIView alloc]initWithFrame:CGRectMake(0, NAVIGATION_BAR_HEIGHT, SCREEN_W, SCREEN_H - NAVIGATION_BAR_HEIGHT)];
+        _bgView.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
+    }
+    return _bgView;
+}
 -(UILabel *)navTitle{
     if (!_navTitle) {
         // 导航标题
         _navTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 18)];
-        _navTitle.text = @"设置密码";
+        _navTitle.text = @"重置密码";
         _navTitle.textAlignment = NSTextAlignmentCenter;
         _navTitle.textColor = [UIColor colorWithHexString:@"#333333"];
         _navTitle.font = BQFONT(18);
@@ -105,6 +115,7 @@
     if (!_textTF) {
         _textTF = [UITextField new];
         _textTF.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
+        _textTF.placeholder = @"8-16位,至少包含数字/字母/字符2种组合";
         _textTF.textColor = [UIColor colorWithHexString:@"#333333"];
         _textTF.font = BQFONT(16);
         
@@ -148,6 +159,7 @@
     self.textTF.text = @"";
 }
 -(void)queDingBtnClick:(UIButton *)queDingBtn{
+    
     if (self.textTF.text.length < 8)
     {
         [SVProgressHUD showErrorText:@"8-16位,至少包含数字/字母/字符2种组合"];
@@ -181,9 +193,8 @@
                 
             }];
             return;
-        }
-        else
-        {
+            
+        }else{
             [SVProgressHUD showErrorText:@"8-16位,至少包含数字/字母/字符2种组合"];
             [SVProgressHUD dismissWithDelay:2];
             return;

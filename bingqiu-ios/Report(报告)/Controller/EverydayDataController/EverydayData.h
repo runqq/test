@@ -10,7 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EverydayData : BaseViewController
+@interface EverydayData : UIViewController
+
+@property(nonatomic,copy)NSString *yearss;
+@property(nonatomic,copy)NSString *monthss;
 
 @end
 

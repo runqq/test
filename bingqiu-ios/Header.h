@@ -10,8 +10,8 @@
 #define Header_h
 
 //ip接口
-//static  NSString  *const  interface = @"http://192.168.0.93:8080/bingyun/api/";
-static  NSString  *const  interface = @"http://124.65.238.30:3300/bingyun/api/";
+static  NSString  *const  interface = @"http://192.168.0.93:8080/bingyun/api/";
+//static  NSString  *const  interface = @"http://124.65.238.30:3300/bingyun/api/";
 // 攻略 - 头部图片地址
 static  NSString  *const  photoPort = @"strategy/getTop";
 // 攻略 - 可能想看的网址
@@ -37,6 +37,7 @@ static  NSString  *const  xqUrl = @"trainingCamp/get";
 static  NSString  *const  baoMingUrl = @"trainingCamp/saveSignUp";
 // 资讯 - 资迅分类列表
 static  NSString  *const  consultPort = @"enumeration/list?type=NewsClassify";
+
 // 资讯 - 根据资讯分类过滤资讯列表
 static  NSString  *const  consultUrl = @"news/pageQiu";
 
@@ -63,7 +64,10 @@ static NSString   *const  biSaiListUrl = @"match/listMatchQiu";
 static NSString   *const  fanKuiYuJianYiUrl = @"suggest/save";
 // 我的勋章
 static NSString   *const  myMedalStr = @"medal/getMedals";
-
+// 判断是否是vip
+static NSString   *const  isVipStr = @"member/getVipCheck";
+// 报告主界面,勋章接口
+static NSString   *const  xunZhangStr = @"medal/getTitleMedal";
 
 // 我 - 个人信息+账户信息 网址
 static NSString   *const  myHomePage = @"my/getMain";

@@ -82,7 +82,7 @@
 -(UILabel *)titleLab{
     if (!_titleLab) {
         _titleLab = [UILabel new];
-        _titleLab.text = @"此功能目前暂未开通";
+        _titleLab.text = @"对不起，您暂未拥有此权限";
         _titleLab.textColor = [UIColor colorWithHexString:@"#666666"];
         _titleLab.font = BQBOLDFONT(18);
     }
@@ -94,12 +94,9 @@
         _placeholderLab.text = @"(购买数据服务即可开通此功能,  详情请咨询华星冰上运动中心各场馆前台)";
         _placeholderLab.textColor = [UIColor colorWithHexString:@"#666666"];
         _placeholderLab.font = BQBOLDFONT(16);
-        
         _placeholderLab.preferredMaxLayoutWidth = (self.view.frame.size.width - 5 * 2);
         [_placeholderLab setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
         _placeholderLab.numberOfLines = 0;
-        
-        
     }
     return _placeholderLab;
 }

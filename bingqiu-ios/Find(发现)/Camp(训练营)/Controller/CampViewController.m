@@ -232,10 +232,12 @@
     // 判断是第几组用section
     if (indexPath.section == 0) {
         
-        XiangQingViewController *xqVC = [[XiangQingViewController alloc]init];
-        xqVC.ids = self.campData[indexPath.row].titleID;
-        xqVC.endStr = self.campData[indexPath.row].signStatus;
-        [self.navigationController pushViewController:xqVC animated:YES];
+        if (self.campData.count) {
+            XiangQingViewController *xqVC = [[XiangQingViewController alloc]init];
+            xqVC.ids = self.campData[indexPath.row].titleID;
+            xqVC.endStr = self.campData[indexPath.row].signStatus;
+            [self.navigationController pushViewController:xqVC animated:YES];
+        }
         
     }else if (indexPath.section == 1){
         
@@ -245,7 +247,6 @@
         XiangQingViewController *xqVC = [[XiangQingViewController alloc]init];
         xqVC.ids = self.campData[indexPath.row].titleID;
         xqVC.endStr = self.campData[indexPath.row].signStatus;
-//        xqVC.hidesBottomBarWhenPushed = YES;
         [self.navigationController pushViewController:xqVC animated:YES];
         
     }

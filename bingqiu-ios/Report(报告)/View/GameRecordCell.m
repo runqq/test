@@ -41,11 +41,10 @@
         [self.bgView addSubview:self.arrowsBtn];
         
         CGFloat circleWidth = 160;
-        self.circle = [[XLCircleProgress alloc] initWithFrame:CGRectMake(0, 0, circleWidth, circleWidth)];
+        self.bqCircle = [[BQCircleProgress alloc] initWithFrame:CGRectMake(0, 0, circleWidth, circleWidth)];
         
-        self.circle.center = CGPointMake(self.bgView.center.x, 130);
-        self.circle.percentLabel1.text = @"总进球(个)";
-        [self.bgView addSubview:self.circle];
+        self.bqCircle.center = CGPointMake(self.bgView.center.x, 130);
+        [self.bgView addSubview:self.bqCircle];
         
         
         [self addLayOut];

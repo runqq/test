@@ -12,6 +12,7 @@
 #import "FindViewController.h"
 #import "LoginViewController.h"
 #import <Bugly/Bugly.h>
+#import <ShareSDK/ShareSDK.h>
 
 
 @interface AppDelegate ()
@@ -28,6 +29,15 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    // 微信,朋友圈,QQ和QQ好友分享
+    [ShareSDK registPlatforms:^(SSDKRegister *platformsRegister) {
+        //QQ
+        [platformsRegister setupQQWithAppId:@"100371282" appkey:@"aed9b0303e3ed1e27bae87c33761161d"];
+        //微信
+        [platformsRegister setupWeChatWithAppId:@"wx617c77c82218ea2c" appSecret:@"c7253e5289986cf4c4c74d1ccc185fb1"];
+        
+    }];
     
     [GLobalRealReachability startNotifier];
     //网络判断

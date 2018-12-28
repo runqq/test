@@ -12,9 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ChaKanDetailsController : UIViewController
 
-@property(nonatomic,copy)NSString *yearss;
-@property(nonatomic,copy)NSString *monthss;
-
 @end
 
 NS_ASSUME_NONNULL_END

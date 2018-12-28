@@ -37,9 +37,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
-    
    // [self netWorkRequest];
-    
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
@@ -65,6 +63,7 @@
     
     // 网络解析
     [self netWorkRequest];
+
 }
 
 -(void)netWorkRequest{
@@ -98,7 +97,8 @@
                         LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
                             [self netWorkRequest];
                         }];
-                        [self presentViewController:loginVC animated:NO completion:nil];
+                        [self.navigationController pushViewController:loginVC animated:YES];
+//                        [self presentViewController:loginVC animated:NO completion:nil];
                         
                     } Failture:^(TuiChuLoginModel *  err_tuichumm) {
                         
@@ -109,7 +109,8 @@
                     LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
                         [self netWorkRequest];
                     }];
-                    [self presentViewController:loginVC animated:NO completion:nil];
+                    [self.navigationController pushViewController:loginVC animated:YES];
+//                    [self presentViewController:loginVC animated:NO completion:nil];
                 }
                 
             }
@@ -119,15 +120,10 @@
 }
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-//    [self.navigationController popViewControllerAnimated:YES];
+    
     MineViewController *mineVC = [[MineViewController alloc]init];
     mineVC.headImgStr = self.myMemberInfoDetailModel.photo;
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
--(void)rightBtn:(UIButton *)lrightBtn{
-    ChangeStuViewController *changeStuVC = [[ChangeStuViewController alloc]init];
-    [self.navigationController pushViewController:changeStuVC animated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark --> 懒加载
@@ -422,6 +418,7 @@
 }
 
 -(void)updataImage{
+    
     // 拼接地址
     NSString *str = [NSString stringWithFormat:@"%@/upload/uploadHead",interface];
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
@@ -439,9 +436,14 @@
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
         NSDictionary * dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:nil];
-        if ([dic[@"success"] integerValue] ==1) {
-            self.imageStr = dic[@"fileUrl"];
-        }        
+        
+        if (dic[@"success"]) {
+            // 判断是否存在
+            if (self.imgagBLock) {
+                self.imgagBLock(self.stuInfoCell.headImg.image);
+            }
+        }
+        
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         
     }];

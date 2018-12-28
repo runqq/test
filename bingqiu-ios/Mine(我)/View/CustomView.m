@@ -76,68 +76,52 @@
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     switch (indexPath.row) {
         case 0:{
-            
             if ([User_Default objectForKey:@"myjsession"]) {
                 ClassRecord *skjlVC = [[ClassRecord alloc]init];
-                UINavigationController *skjlNav = [[UINavigationController alloc]initWithRootViewController:skjlVC];
-                [[self viewController] presentViewController:skjlNav animated:NO completion:nil];
-                
+                [[self viewController].navigationController pushViewController:skjlVC animated:YES];
+//                UINavigationController *skjlNav = [[UINavigationController alloc]initWithRootViewController:skjlVC];
+//                [[self viewController] presentViewController:skjlNav animated:NO completion:nil];
             }else{
-                
                 // 不存在跳转到登录界面
-                LoginViewController  *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
-                    ClassRecord *skjlVC = [[ClassRecord alloc]init];
-                    UINavigationController *skjlNav = [[UINavigationController alloc]initWithRootViewController:skjlVC];
-                    [[self viewController] presentViewController:skjlNav animated:NO completion:nil];
-                }];
-                [[self viewController] presentViewController:loginVC animated:NO completion:nil];
-                
-//                LoginViewController *loginVC = [[LoginViewController alloc]init];
-//                [[self viewController] presentViewController:loginVC animated:NO completion:nil];
+                LoginViewController *loginVC = [[LoginViewController alloc]init];
+                [[self viewController].navigationController pushViewController:loginVC animated:YES];
             }
-            
         }
             break;
-            
         case 1:{
-            
             if ([User_Default objectForKey:@"myjsession"]) {
                 XianJinAccount *xjzhVC = [[XianJinAccount alloc]init];
-                UINavigationController *xjzhNav = [[UINavigationController alloc]initWithRootViewController:xjzhVC];
-                [[self viewController] presentViewController:xjzhNav animated:NO completion:nil];
-                
+                [[self viewController].navigationController pushViewController:xjzhVC animated:YES];
+//                UINavigationController *xjzhNav = [[UINavigationController alloc]initWithRootViewController:xjzhVC];
+//                [[self viewController] presentViewController:xjzhNav animated:NO completion:nil];
             }else{
                 LoginViewController *loginVC = [[LoginViewController alloc]init];
-                [[self viewController] presentViewController:loginVC animated:NO completion:nil];
+                [[self viewController].navigationController pushViewController:loginVC animated:YES];
             }
-            
         }
             break;
         case 2:{
             if ([User_Default objectForKey:@"myjsession"]) {
                 JiangXueJinController *jxjVC = [[JiangXueJinController alloc]init];
-                UINavigationController *jxjNav = [[UINavigationController alloc]initWithRootViewController:jxjVC];
-                [[self viewController] presentViewController:jxjNav animated:NO completion:nil];
-                
+                [[self viewController].navigationController pushViewController:jxjVC animated:YES];
+//                UINavigationController *jxjNav = [[UINavigationController alloc]initWithRootViewController:jxjVC];
+//                [[self viewController] presentViewController:jxjNav animated:NO completion:nil];
             }else{
                 LoginViewController *loginVC = [[LoginViewController alloc]init];
-                [[self viewController] presentViewController:loginVC animated:NO completion:nil];
+                [[self viewController].navigationController pushViewController:loginVC animated:YES];
             }
-            
         }
             break;
         case 3:{
-            
             if ([User_Default objectForKey:@"myjsession"]) {
                 RecordViewController *gkjlVC = [[RecordViewController alloc]init];
-                UINavigationController *gkjlNav = [[UINavigationController alloc]initWithRootViewController:gkjlVC];
-                [[self viewController] presentViewController:gkjlNav animated:NO completion:nil];
-                
+                [[self viewController].navigationController pushViewController:gkjlVC animated:YES];
+//                UINavigationController *gkjlNav = [[UINavigationController alloc]initWithRootViewController:gkjlVC];
+//                [[self viewController] presentViewController:gkjlNav animated:NO completion:nil];
             }else{
                 LoginViewController *loginVC = [[LoginViewController alloc]init];
-                [[self viewController] presentViewController:loginVC animated:NO completion:nil];
+                [[self viewController].navigationController pushViewController:loginVC animated:YES];
             }
-            
         }
             break;
             

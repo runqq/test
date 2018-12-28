@@ -18,9 +18,7 @@
 #import "HelpListViewModel.h"
 #import "HelpTypeListDetailModel.h"
 
-@interface HelpAndFanKui ()<UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>{
-    
-}
+@interface HelpAndFanKui ()<UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>
 
 @property(nonatomic,strong)UILabel *navTitleLab;
 @property(nonatomic,strong)UIButton *leftBtn;
@@ -37,16 +35,22 @@
 @property(nonatomic,strong)NSMutableArray <HelpListDetailModel *>*hlData;
 @property(nonatomic,strong)HelpTypeListDetailModel *helpTypeListDetailModel;
 
+@property(nonatomic,strong)NSMutableArray *helpTypeListArr1;
+@property(nonatomic,strong)NSMutableArray *helpTypeListArr2;
+@property(nonatomic,strong)NSMutableArray *helpTypeListArr3;
+@property(nonatomic,strong)NSMutableArray *helpTypeListArr4;
+@property(nonatomic,strong)NSMutableArray *helpTypeListArr5;
+
 @property(nonatomic,strong)NSMutableArray *array;
 @property(nonatomic,strong)NSMutableArray *aryOne;
-//@property(nonatomic,strong)NSMutableArray *aryTwo;
 
-//@property(nonatomic,assign)NSInteger *i;
+@property(nonatomic,assign) BOOL isOpen;
+@property(nonatomic,assign) BOOL isFir;
+@property(nonatomic,assign) BOOL isSec;
+@property(nonatomic,assign) BOOL isThir;
+@property(nonatomic,assign) BOOL isFour;
+@property(nonatomic,assign) BOOL isFifth;
 
-
-
-
-@property(nonatomic,assign) BOOL IsYes;
 @property(nonatomic,copy)HMPublicValueChanged shujuWenTi;
 
 @end
@@ -64,6 +68,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.isOpen = NO;
+    
     // 视图背景颜色
     self.view.backgroundColor = [UIColor colorWithHexString:@"eeeeee"];
     // 导航栏标题
@@ -76,38 +83,57 @@
     
     [self.view addSubview:self.topV];
     [self.view addSubview:self.leftTbv];
-    [self.view addSubview:self.leftTbv];
     [self.view addSubview:self.rightTbv];
     [self.view addSubview:self.bottomV];
     
 }
 
 -(void)netWorkRequest{
-    
+    self.hlData = [NSMutableArray array];
     [self.hlViewModel getHelpListWithSuccess:^(HelpListModel * helpListModel) {
-        self.array = [NSMutableArray array];
-        self.aryOne = [NSMutableArray array];
-//        self.aryTwo = [NSMutableArray array];
-        // self.array 用来接收在外层的数组data
-        
-        self.array= [HelpListDetailModel mj_objectArrayWithKeyValuesArray:helpListModel.data];
-        NSLog(@"%@",helpListModel);
-        HelpListDetailModel *detailModel = self.array[0];
-        // self.aryOne 用来接收helpTypeList所对应的数据
-        self.aryOne = [HelpTypeListDetailModel mj_objectArrayWithKeyValuesArray:detailModel.helpTypeList];
-        
-//        HelpListDetailModel *detailModel1 = self.array[1];
-//        // self.aryTwo 用来接收helpTypeList所对应的数据
-//        self.aryTwo = [HelpTypeListDetailModel mj_objectArrayWithKeyValuesArray:detailModel1.helpTypeList];
-        
-        
-        // 刷新表格
-        [self.leftTbv reloadData];
-        [self.rightTbv reloadData];
-        
+        if (helpListModel.success) {
+            for (HelpListDetailModel *detailModel in helpListModel.data) {
+                [self.hlData addObject:detailModel];
+            }
+            HelpListDetailModel *helpListDetailModel;
+            self.helpTypeListArr1 = [NSMutableArray array];
+            self.helpTypeListArr2 = [NSMutableArray array];
+            self.helpTypeListArr3 = [NSMutableArray array];
+            self.helpTypeListArr4 = [NSMutableArray array];
+            self.helpTypeListArr5 = [NSMutableArray array];
+            if (self.hlData.count) {
+                
+                helpListDetailModel = self.hlData[0];
+                for (HelpTypeListDetailModel *typeListDetail in helpListDetailModel.helpTypeList) {
+                    [self.helpTypeListArr1 addObject:typeListDetail];
+                }
+                
+                helpListDetailModel = self.hlData[1];
+                for (HelpTypeListDetailModel *typeListDetail1 in helpListDetailModel.helpTypeList) {
+                    [self.helpTypeListArr2 addObject:typeListDetail1];
+                }
+                
+                helpListDetailModel = self.hlData[2];
+                for (HelpTypeListDetailModel *typeListDetail in helpListDetailModel.helpTypeList) {
+                    [self.helpTypeListArr3 addObject:typeListDetail];
+                }
+                
+                helpListDetailModel = self.hlData[3];
+                for (HelpTypeListDetailModel *typeListDetail in helpListDetailModel.helpTypeList) {
+                    [self.helpTypeListArr4 addObject:typeListDetail];
+                }
+                helpListDetailModel = self.hlData[4];
+                for (HelpTypeListDetailModel *typeListDetail in helpListDetailModel.helpTypeList) {
+                    [self.helpTypeListArr5 addObject:typeListDetail];
+                }
+                
+            }
+            
+            [self.leftTbv reloadData];
+            [self.rightTbv reloadData];
+        }
  
     } Failture:^(HelpListModel * helpListError) {
-        
         
     }];
     
@@ -196,25 +222,45 @@
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     if (tableView == _leftTbv) {
         return 1;
-    }else{
-        return 5;
     }
+    return self.hlData.count;
+    
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (tableView == _leftTbv) {
-        return 5;
+        return self.hlData.count;
         
     }else{
+        
         if (section == 0) {
-            if (self.IsYes) {
-              return  self.aryOne.count;
-                }
+            if (self.isFir) {
+                return _helpTypeListArr1.count;
+            }
+        }else if (section == 1){
+            if (self.isSec) {
+                return _helpTypeListArr2.count;
+            }
+        }else if (section == 2){
+            if (self.isThir) {
+                return _helpTypeListArr3.count;
+            }
+        }else if (section == 3){
+            if (self.isFour) {
+                return _helpTypeListArr4.count;
+            }
+            
+        }else if (section == 4){
+            if (self.isFifth) {
+                return _helpTypeListArr5.count;
             }
         }
-        return 2;
+          return 2;
+    }
+  
+    
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    _leftTbv.rowHeight = 45;
+    
     if (tableView == _leftTbv) {
         LeftTableViewCell *leftCell = [tableView dequeueReusableCellWithIdentifier:@"leftCell"];
         if (!leftCell) {
@@ -224,57 +270,117 @@
         NSArray  *imgArr = @[@"icon_product_heip",@"icon_data_heip",@"icon_program_heip",@"icon_privacy_heip",@"icon_other_help"];
         leftCell.photoImg.image = [UIImage imageNamed:imgArr[indexPath.row]];
         
-        HelpListDetailModel *detailModel = self.array[indexPath.row];
-        leftCell.titleLab.text = detailModel.helpTypeText;
-//        NSLog(@"detail%@",_array);
+        leftCell.titleLab.text = self.hlData[indexPath.row].helpTypeText;
         [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
-        if (self.IsYes) {
-            [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
-        }else{
-            [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+        
+        if (indexPath.row == 0) {
+            if (self.isFir) {
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+            }else{
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
+            }
+        }else if (indexPath.row == 1){
+            if (self.isSec) {
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+            }else{
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
+            }
+        }else if (indexPath.row == 2){
+            if (self.isThir) {
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+            }else{
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
+            }
+        }else if (indexPath.row == 3){
+            if (self.isFour) {
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+            }else{
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
+            }
+        }else if (indexPath.row == 4){
+            if (self.isFifth) {
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_up_help"] forState:UIControlStateNormal];
+            }else{
+                [leftCell.arrowsBtn setImage:[UIImage imageNamed:@"arrow_down_help"] forState:UIControlStateNormal];
+            }
         }
         return leftCell;
         
     }else{
         
-        RightTableViewCell *cell = [RightTableViewCell cellWithTableVIew:tableView];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        RightTableViewCell *rightCell = [tableView dequeueReusableCellWithIdentifier:@"rightCell"];
+        if (!rightCell) {
+            rightCell = [[RightTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"rightCell"];
+        }
+        rightCell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        HelpTypeListDetailModel *model = self.aryOne[indexPath.row];
-        cell.titleLab.text = model.title;
+        if (indexPath.section == 0) {
+            rightCell.titleLab.text = [_helpTypeListArr1[indexPath.row] objectForKey:@"title"];
+            
+        }else if (indexPath.section == 1){
+            rightCell.titleLab.text = [_helpTypeListArr2[indexPath.row] objectForKey:@"title"];
+            
+        }else if (indexPath.section == 2){
+            rightCell.titleLab.text = [_helpTypeListArr3[indexPath.row] objectForKey:@"title"];
+            
+        }else if (indexPath.section == 3){
+            rightCell.titleLab.text = [_helpTypeListArr4[indexPath.row] objectForKey:@"title"];
+            
+        }else{
+            rightCell.titleLab.text = [_helpTypeListArr5[indexPath.row] objectForKey:@"title"];
+        }
         
-        return cell;
+        return rightCell;
         
     }
     
 }
 // 设置cell的行高
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     if (tableView == _leftTbv) {
-        
-        if (self.IsYes) {
-            NSLog(@"%ld",self.i);
-            if (indexPath.row == self.i) {
-                return  self.aryOne.count*45;
+        if (indexPath.row == 0) {
+            if (self.isFir) {
+                return _helpTypeListArr1.count * 45;
+            }else{
+                
+                return 90;
             }
-            
-        }else{
-           return 90;
+        }else if (indexPath.row == 1){
+            if (self.isSec) {
+                return _helpTypeListArr2.count * 45;
+            }else{
+                return 90;
+            }
+        }else if (indexPath.row == 2){
+            if (self.isThir) {
+                return _helpTypeListArr3.count * 45;
+            }else{
+                
+                return 90;
+            }
+        }else if (indexPath.row == 3){
+            if (self.isFour) {
+                return _helpTypeListArr4.count * 45;
+            }else{
+                
+                return 90;
+            }
+        }else if (indexPath.row == 4){
+            if (self.isFifth) {
+                return _helpTypeListArr5.count * 45;
+            }else{
+                return 90;
+            }
         }
-       
-    }else{
-        return 45;
     }
-    
-    
-    return 90;
-   
+        return 45;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 0;
+    return 0.01;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 0;
+    return 0.01;
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     return 0;
@@ -286,19 +392,28 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView == _leftTbv) {
-        self.i = indexPath.row;
-        self.IsYes = !self.IsYes;
         
-        
-        [self.rightTbv reloadData];
-        
-        [self.leftTbv reloadData];
-       
+        if (indexPath.row == 0) {
+            self.isFir = !self.isFir;
+        }else if (indexPath.row == 1){
+            self.isSec = !self.isSec;
+        } else if  (indexPath.row == 2){
+            self.isThir = !self.isThir;
+            
+        }else if (indexPath.row == 3){
+            self.isFour = !self.isFour;
       
-    }else{
-        [self.rightTbv reloadData];
+        }else if (indexPath.row == 4){
+            self.isFifth = !self.isFifth;
+          
+        }
+    }
+    
+    [self.leftTbv reloadData];
+    [self.rightTbv reloadData];
+    
+    if (tableView == _rightTbv) {
         
-        [self.leftTbv reloadData];
     }
     
 }

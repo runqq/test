@@ -19,13 +19,22 @@
 // 设置密码
 #import "ResetPasswordController.h"
 #import "LoginViewController.h"
-#import "NonmemberController.h"
 #import "HelpAndFanKui.h"
+
+#import "NonmemberController.h"
+#import "NonmemberView.h"
+
+#import "IsVipModel.h"
+#import "IsVipDetailModel.h"
+#import "IsVipViewModel.h"
 
 #import "HomePageModel.h"
 #import "HomePageDetailModel.h"
 #import "HomePageViewModel.h"
 
+#import "XunZhangModel.h"
+#import "XunZhangDetailModel.h"
+#import "XunZhangViewModel.h"
 
 #import "ShareViewController.h"
 
@@ -46,9 +55,19 @@
 @property(nonatomic,strong)UILabel *myMedalLab;
 @property(nonatomic,strong)NSArray *numArr;
 
+@property(nonatomic,strong)IsVipViewModel *isVipViewModel;
+@property(nonatomic,strong)IsVipModel     *isVipModel;
+@property(nonatomic,strong)IsVipDetailModel *isVipDetailModel;
+@property(nonatomic,strong)NonmemberView *noMemberV;
+
 @property(nonatomic,strong)HomePageModel *homePageModel;
 @property(nonatomic,strong)HomePageViewModel *homePageViewModel;
 @property(nonatomic,strong)HomePageDetailModel *homePageDetailModel;
+
+@property(nonatomic,strong)XunZhangModel *xzModel;
+@property(nonatomic,strong)XunZhangDetailModel *xzDetailModel;
+@property(nonatomic,strong)XunZhangViewModel *xzViewModel;
+
 
 @end
 
@@ -65,24 +84,9 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    // 如果jsession存在请求数据
-    if ([User_Default objectForKey:@"myjsession"]) {
-        [self netWorkRequest];
-        
-    }else{
-        
-//        // 不存在跳转到登录界面
-//        LoginViewController  *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
-//            [self netWorkRequest];
-//        }];
-//        loginVC.dismissBlock = ^{
-//            [self.tabBarController setSelectedIndex:1];
-//        };
-//        //        [self.navigationController pushViewController:loginVC animated:NO];
-//        [self presentViewController:loginVC animated:NO completion:nil];
-//        [self.tbv reloadData];
-    }
-
+    // 网络请求
+    [self postNet];
+    
 }
 
 - (void)viewDidLoad {
@@ -118,12 +122,11 @@
     //去除导航条透明后导航条下的黑线
     [self.navigationController.navigationBar setShadowImage:[UIImage new]];
     
-    // 网络解析
-    [self postNet];
     // 将表格添加到主视图
     [self.view addSubview:self.tbv];
     
 }
+
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
     CGFloat reOffset = scrollView.contentOffset.y + (SCREEN_H - 64) * 0.2;
@@ -174,22 +177,39 @@
         [self netWorkRequest];
         
     }else{
-        
         __weak typeof(self) weakSelf = self;
         // 不存在跳转到登录界面
-        LoginViewController  *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
-            [weakSelf netWorkRequest];
-        }];
+        LoginViewController *loginVC = [[LoginViewController alloc]init];
+        // 定义comefrom变量,如果等于这个变量就让选中的下标为1
+        loginVC.comefrom = 1;
         loginVC.dismissBlock = ^{
             [weakSelf.tabBarController setSelectedIndex:1];
         };
-        [self presentViewController:loginVC animated:NO completion:nil];
+        [self.navigationController pushViewController:loginVC animated:NO];
     }
 }
 
 
 // 网络请求
 -(void)netWorkRequest{
+    
+    [self.xzViewModel getXunZhangPhotoSuccess:^(XunZhangModel * xzModel) {
+        if (xzModel.success) {
+            self.xzDetailModel.timePhoto = xzModel.data[@"timePhoto"];
+            self.xzDetailModel.distancePhoto = xzModel.data[@"distancePhoto"];
+        }
+        
+        NSString *distanceStr = self.xzDetailModel.distancePhoto;
+        [self.medal_distance_1_Img sd_setImageWithURL:[NSURL URLWithString:distanceStr] placeholderImage:[UIImage imageNamed:@"medal_time_not_home"]];
+        
+        NSString *timeStr = self.xzDetailModel.timePhoto;
+        [self.medal_distance_2_Img sd_setImageWithURL:[NSURL URLWithString:timeStr] placeholderImage:[UIImage imageNamed:@"medal_time_not_home"]];
+        
+        [self.tbv reloadData];
+        
+    } Failture:^(XunZhangModel * xzError) {
+        
+    }];
     
     [self.homePageViewModel getHomePageDataWithSuccess:^(HomePageModel *  homePageModel) {
         // 停止刷新
@@ -237,20 +257,23 @@
         [self.tbv.mj_header endRefreshing];
         
         if ([[homePageModel.message substringToIndex:5] isEqualToString:@"未登陆错误"]) {
-            [User_Default setValue:nil forKey:@"mysession"];
-            LoginViewController  *loginVC = [[LoginViewController alloc] init];
-            [self presentViewController:loginVC animated:YES completion:nil];
             
-//            [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
-//                if (tuichumm.success) {
-//                    [User_Default setValue:@"" forKey:@"mysession"];
-//                    LoginViewController  *loginVC = [[LoginViewController alloc] init];
-//                    [self presentViewController:loginVC animated:YES completion:nil];
-//                }else{
-//                    [self showErrorText:tuichumm.message];
-//                }
-//            } Failture:^(TuiChuLoginModel * err_tuichumm) {
-//            }];
+            [User_Default setValue:nil forKey:@"mysession"];
+            
+            __weak typeof(self) weakSelf = self;
+            // 不存在跳转到登录界面
+            LoginViewController *loginVC = [[LoginViewController alloc]init];
+            // 定义comefrom变量,如果等于这个变量就让选中的下标为1
+            loginVC.comefrom = 1;
+            loginVC.dismissBlock = ^{
+                [weakSelf.tabBarController setSelectedIndex:1];
+            };
+            
+            [self.navigationController pushViewController:loginVC animated:NO];
+            
+//            LoginViewController  *loginVC = [[LoginViewController alloc] init];
+//            [self.navigationController pushViewController:loginVC animated:YES];
+            
         }
         
     }];
@@ -289,7 +312,6 @@
 }
 
 #pragma mark --> 懒加载
-
 -(UIButton *)bg_medal_Btn{
     if (!_bg_medal_Btn) {
         _bg_medal_Btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -386,7 +408,8 @@
         gameRecCell.gameTimeNum.text = [NSString stringWithFormat:@"%@",self.homePageDetailModel.matchNum];
         // 总进球
         float floaStr = [self.homePageDetailModel.matchGoalNum floatValue];
-        gameRecCell.circle.progress = floaStr/20000.00;
+        gameRecCell.bqCircle.progress = floaStr/100.00;
+        
         // 总助攻(次)
         gameRecCell.assistNum.text = [NSString stringWithFormat:@"%@",self.homePageDetailModel.matchAssistNum];
         // 总得分
@@ -545,7 +568,6 @@
         return _bgImg;
         
     }else{
-        
         return 0;
     }
 }
@@ -555,7 +577,6 @@
 }
 
 #pragma mark --> 按钮点击事件
-
 -(void)leftBtnClick:(UIButton *)leftBtn{
     HelpAndFanKui *helpVC = [[HelpAndFanKui alloc]init];
     UINavigationController *helpNav = [[UINavigationController alloc]initWithRootViewController:helpVC];
@@ -573,24 +594,22 @@
 // 训练数据 --> 查看详情按钮
 -(void)examineDetails:(UIButton *)detailsBtn{
     ChaKanDetailsController *detailsVC = [[ChaKanDetailsController alloc]init];
-    [self.navigationController pushViewController:detailsVC animated:NO];
+    [self.navigationController pushViewController:detailsVC animated:YES];
 }
 // 训练数据 --> 成长轨迹按钮
 -(void)trainBtnClick:(UIButton *)czgjBtn{
     ShareViewController *trainShareVC = [[ShareViewController alloc]init];
-//    trainShareVC.trainStr = @"http://192.168.0.93:8080/html/train.html";
     [self.navigationController pushViewController:trainShareVC animated:YES];
 }
 // 比赛记录 --> 查看详情按钮
 -(void)chaKanDetailBtn:(UIButton *)chaKanDetail{
     GameRecordController *gameRecordVC = [[GameRecordController alloc]init];
-    [self.navigationController pushViewController:gameRecordVC animated:NO];
+    [self.navigationController pushViewController:gameRecordVC animated:YES];
 
 }
 // 比赛记录 --> 成长轨迹按钮
 -(void)trackBtnClick:(UIButton *)bsjlBtn{
     ShareViewController *trainShareVC = [[ShareViewController alloc]init];
-    //    trainShareVC.trainStr = @"http://192.168.0.93:8080/html/train.html";
     [self.navigationController pushViewController:trainShareVC animated:YES];
 }
 
@@ -611,6 +630,49 @@
         _homePageViewModel = [[HomePageViewModel alloc]init];
     }
     return _homePageViewModel;
+}
+
+-(XunZhangModel *)xzModel{
+    if (!_xzModel) {
+        _xzModel = [[XunZhangModel alloc]init];
+    }
+    return _xzModel;
+}
+-(XunZhangDetailModel *)xzDetailModel{
+    if (!_xzDetailModel) {
+        _xzDetailModel = [[XunZhangDetailModel alloc]init];
+    }
+    return _xzDetailModel;
+}
+-(XunZhangViewModel *)xzViewModel{
+    if (!_xzViewModel) {
+        _xzViewModel = [[XunZhangViewModel alloc]init];
+    }
+    return _xzViewModel;
+}
+-(IsVipModel *)isVipModel{
+    if (!_isVipModel) {
+        _isVipModel = [[IsVipModel alloc]init];
+    }
+    return _isVipModel;
+}
+-(IsVipViewModel *)isVipViewModel{
+    if (!_isVipViewModel) {
+        _isVipViewModel = [[IsVipViewModel alloc]init];
+    }
+    return _isVipViewModel;
+}
+-(IsVipDetailModel *)isVipDetailModel{
+    if (!_isVipDetailModel) {
+        _isVipDetailModel = [[IsVipDetailModel alloc]init];
+    }
+    return _isVipDetailModel;
+}
+-(NonmemberView *)noMemberV{
+    if (!_noMemberV) {
+        _noMemberV = [[NonmemberView alloc]init];
+    }
+    return _noMemberV;
 }
 
 @end

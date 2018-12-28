@@ -64,18 +64,18 @@
     [super viewDidLoad];
     
     self.navigationItem.titleView = self.navTitleLab;
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     // 导航右侧筛选按钮
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.rightBut];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
-    // 将表格添加到主视图
-    [self.view addSubview:self.tbv];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     
     // 网络解析
     [self netWorkRequest];
+    
+    // 将表格添加到主视图
+    [self.view addSubview:self.tbv];
     
 }
 
@@ -96,8 +96,6 @@
     self.skjlData = [NSMutableArray array];
     
     [self.skjlViewModel getShangKeJiLuWithPageNo:pageNum PageSize:sizeNum yearStr:yearss MonthStr:monthss Success:^(ShangKeJiLuModel *  skjlModel) {
-        // 停止刷新
-        [self.tbv.mj_header endRefreshing];
         if (skjlModel.success) {
             for (ShangKeJiLuDetailModel *detailModel in skjlModel.data) {
                 [self.skjlData addObject:detailModel];
@@ -105,48 +103,57 @@
             if (self.skjlData.count == 0) {
                 [self.view addSubview:self.kongJieMian];
             }else{
-                [self->_kongJieMian removeFromSuperview];
+                [self.kongJieMian removeFromSuperview];
             }
+            // 停止刷新
+            [self.tbv.mj_header endRefreshing];
             [self.tbv reloadData];
             
         }
         
     } Failture:^(ShangKeJiLuModel *  skjlError) {
+        
         if ([[skjlError.message substringToIndex:5] isEqualToString:@"未登陆错误"]) {
             
             if ([User_Default objectForKey:@"myjsession"]) {
-                [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
-                    //登录
-                    LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
-                        [self netWorkRequest];
-                    }];
-                    [self presentViewController:loginVC animated:YES completion:nil];
-                    
-                } Failture:^(TuiChuLoginModel * err_tuichumm) {
-                    
-                }];
+                [self netWorkRequest];
                 
             }else{
                 
-                //登录
-                LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
-                    [self netWorkRequest];
-                }];
-                [self presentViewController:loginVC animated:YES completion:nil];
+                LoginViewController *loginVC = [[LoginViewController alloc]init];
+                [self.navigationController pushViewController:loginVC animated:YES];
             }
+//            if ([User_Default objectForKey:@"myjsession"]) {
+//                [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
+//                    //登录
+////                    LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
+////                        [self netWorkRequest];
+////                    }];
+////                    LoginViewController *loginVC = [[LoginViewController alloc]init];
+////                    [self.navigationController pushViewController:loginVC animated:YES];
+////                    [self presentViewController:loginVC animated:YES completion:nil];
+//                } Failture:^(TuiChuLoginModel * err_tuichumm) {
+//                }];
+//            }else{
+//                //登录
+//                LoginViewController *loginVC = [[LoginViewController alloc]initWithLoginSuccessBlock:^{
+//                    [self netWorkRequest];
+//                }];
+//                [self.navigationController pushViewController:loginVC animated:YES];
+////                [self presentViewController:loginVC animated:YES completion:nil];
+//            }
         }
     }];
 }
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 // 筛选按钮
 -(void)rightBtn:(UIButton *)rightBtn{
-    
     NSIndexPath * indexrow = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.screenV.leftTable selectRowAtIndexPath:indexrow animated:YES scrollPosition:1];
-    
     [self.screenV showCustomScreenView:self.view];
 }
 

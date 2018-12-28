@@ -37,6 +37,7 @@
         self._circle = [[XLCircleProgress alloc] initWithFrame:CGRectMake(0, 0, circleWidth, circleWidth)];
         self._circle.center = CGPointMake(self.bgView.center.x, 145);
           [self.bgView addSubview:self._circle];
+        
         [self addLayOut];
         
     }

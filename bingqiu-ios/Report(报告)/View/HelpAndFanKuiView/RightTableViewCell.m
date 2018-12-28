@@ -21,15 +21,6 @@
     return self;
 }
 
-+(instancetype)cellWithTableVIew:(UITableView *)tableView{
-        RightTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-        if (!cell) {
-            cell = [[RightTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        }
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        return cell;
-}
-
 -(void)addLayOut{
     __weak typeof(self) weakself = self;
     [self.bottomLine mas_makeConstraints:^(MASConstraintMaker *make) {

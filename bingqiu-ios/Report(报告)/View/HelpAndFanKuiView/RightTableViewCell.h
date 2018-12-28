@@ -15,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong)UILabel *bottomLine;
 @property(nonatomic,strong)UILabel *titleLab;
 
-+(instancetype)cellWithTableVIew:(UITableView *)tableView;
-
 @end
 
 NS_ASSUME_NONNULL_END

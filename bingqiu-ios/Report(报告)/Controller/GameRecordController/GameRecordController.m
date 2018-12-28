@@ -7,6 +7,7 @@
 //
 
 #import "GameRecordController.h"
+#import "JiLuKongJieMianView.h"
 #import "WangLuoCuoWu.h"
 #import "ScreenView.h"
 #import "GameRecordDetails.h"
@@ -28,6 +29,7 @@
 
 @property(nonatomic,strong)WangLuoCuoWu *netWorkErrorView;
 @property(nonatomic,strong)ScreenView *screenV;
+@property(nonatomic,strong)JiLuKongJieMianView *kongJieMian;
 
 @property(nonatomic,copy)UILabel  *titLab;
 @property(nonatomic,strong)UIButton *rightBut;
@@ -109,6 +111,11 @@
             for (BiSaiListDetailModel *biSaiDetailModel in biSaiModel.data) {
                 [self.bsData addObject:biSaiDetailModel];
             }
+            if (self.bsData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self->_kongJieMian removeFromSuperview];
+            }
 //            if (self.bsData.count == 0) {
 //                self.netWorkErrorView = [[WangLuoCuoWu alloc]init];
 //                [self.netWorkErrorView showCustomNetWorkErrorView:self.view];
@@ -161,6 +168,12 @@
 }
 
 #pragma mark --> 懒加载
+-(JiLuKongJieMianView *)kongJieMian{
+    if (!_kongJieMian) {
+        _kongJieMian = [[JiLuKongJieMianView alloc]init];
+    }
+    return _kongJieMian;
+}
 -(UILabel *)titLab{
     if (!_titLab) {
         _titLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 18)];

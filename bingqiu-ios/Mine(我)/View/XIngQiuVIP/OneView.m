@@ -14,6 +14,8 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        
+        [self addSubview:self.topLine];
         [self addSubview:self.photoImg];
         [self addSubview:self.nameLab];
         [self addSubview:self.subLab];
@@ -26,10 +28,14 @@
 }
 -(void)addLayOut{
     __weak typeof(self) weakself = self;
+    [self.topLine mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(weakself.mas_top);
+        make.left.equalTo(weakself.mas_left);
+        make.size.mas_equalTo(CGSizeMake(SCREEN_W, 0.5));
+    }];
     [self.photoImg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(weakself.mas_left).with.offset(15);
         make.centerY.equalTo(weakself.mas_centerY);
-//        make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     [self.nameLab mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.mas_top).with.offset(18);
@@ -44,6 +50,13 @@
         make.right.equalTo(weakself.mas_right).with.offset(-15);
     }];
     
+}
+-(UILabel *)topLine{
+    if (!_topLine) {
+        _topLine = [UILabel new];
+        _topLine.backgroundColor = [UIColor colorWithHexString:@"#e2e2e2"];
+    }
+    return _topLine;
 }
 -(UIImageView *)photoImg{
     if (!_photoImg) {

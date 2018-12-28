@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign)BOOL success;
 @property(nonatomic,assign)NSNumber *totalProperty;
 @property(nonatomic,copy)NSString *message;
-@property(nonatomic,strong)NSMutableArray  *data;
+@property(nonatomic,strong)NSMutableArray  <HelpListDetailModel *>*data;
 
 @end
 

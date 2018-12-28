@@ -11,6 +11,7 @@
 #import "StrategyOneTableViewCell.h"
 #import "StrategyTwoTableViewCell.h"
 #import "ReadViewController.h"
+#import "LoginViewController.h"
 
 #import "StrategyViewModel.h"
 #import "StategyDetailModel.h"
@@ -64,16 +65,51 @@
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = NO;
     self.tabBarController.tabBar.hidden = NO;
+    
+    [self isVipRequest];
+    
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     self.tabBarController.tabBar.hidden = NO;
 }
 
+-(void)isVipRequest{
+    NSString * str = [NSString stringWithFormat:@"%@%@",interface,isVipStr];
+    [HttpTool GetHttpDataWithUrlStr:str  Dic:nil SuccessBlock:^(id responseObject) {
+        if ([responseObject[@"success"] integerValue] ==1) {
+            
+//            NSInteger isVip = [responseObject[@"data"][@"isVip"] integerValue];
+            
+            [User_Default setObject:responseObject[@"data"][@"isVip"] forKey:@"isVip"];
+            
+            if ([[User_Default objectForKey:@"isVip"] integerValue]) {
+                
+            }
+            
+            
+//            [User_Default setObject:isVip forKey:@""];
+            
+        }else if ([responseObject[@"success"] integerValue] ==0){
+            // 调登录界面
+            LoginViewController *loginVC = [[LoginViewController alloc]init];
+            [self.navigationController pushViewController:loginVC animated:YES];
+            
+        }else{
+            [SVProgressHUD showErrorText:responseObject[@"message"]];
+            [SVProgressHUD dismissWithDelay:1.25];
+        }
+    } FailureBlock:^(id errorResponseObject) {
+        
+    }];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景颜色
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    [self.navigationItem setHidesBackButton:YES];
     
     page = 1;
     size = 4;
@@ -153,6 +189,7 @@
     } Failture:^(AllStrategyModel * glError) {
         //        BQLog(@"%d",glError.success);
     }];
+    
 }
 //刷新攻略数据
 - (void)refreshStrategyWithType:(NSString *)strategyType {
@@ -273,7 +310,6 @@
         // block块里的self都需要弱引用
         __weak typeof(self) weakSelf = self;
         oneCell.btnClickedBlock = ^(NSInteger index) {
-            
             AllStraDetailModel *curentModel = [weakSelf.gldata objectAtIndex:index];
             [weakSelf refreshStrategyWithType:curentModel.value];
         };
@@ -408,12 +444,6 @@
     }
     return _wantDetailModel;
 }
-//-(NSMutableArray<WantToSeeDetailModel *> *)data{
-//    if (!_data) {
-//        _data = [NSMutableArray array];
-//    }
-//    return _data;
-//}
 -(HotViewModel *)hotViewModel{
     if (!_hotViewModel) {
         _hotViewModel = [[HotViewModel alloc]init];

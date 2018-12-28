@@ -48,7 +48,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     // 导航标题
     UILabel  *titLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 18)];
     titLab.text = @"奖学金账户";
@@ -110,7 +110,8 @@
                 [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
                     //登录
                     LoginViewController *loginVC = [[LoginViewController alloc]init];
-                    [self presentViewController:loginVC animated:YES completion:nil];
+                    [self.navigationController pushViewController:loginVC animated:YES];
+//                    [self presentViewController:loginVC animated:YES completion:nil];
                     
                 } Failture:^(TuiChuLoginModel * err_tuichumm) {
 //                    [self.view showErrorText:err_tuichumm.message];
@@ -122,7 +123,8 @@
 
 #pragma mark --> 按钮的点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 

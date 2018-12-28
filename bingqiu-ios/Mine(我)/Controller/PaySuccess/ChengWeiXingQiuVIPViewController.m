@@ -37,6 +37,12 @@
 
 @implementation ChengWeiXingQiuVIPViewController
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    // tabbar不隐藏
+    self.tabBarController.tabBar.hidden = YES;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -46,7 +52,7 @@
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     
     // 网络解析
     [self netWorkRequest];
@@ -76,7 +82,8 @@
 
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark --> 懒加载
 -(UILabel *)navTitleLab{
@@ -122,8 +129,9 @@
 }
 -(void)tiJiaoBtnClick:(UIButton *)send{
     PaySuccessViewController *paySuccessVC = [[PaySuccessViewController alloc]init];
-    UINavigationController *paySuccessNav = [[UINavigationController alloc]initWithRootViewController:paySuccessVC];
-    [self presentViewController:paySuccessNav animated:NO completion:nil];
+    [self.navigationController pushViewController:paySuccessVC animated:YES];
+//    UINavigationController *paySuccessNav = [[UINavigationController alloc]initWithRootViewController:paySuccessVC];
+//    [self presentViewController:paySuccessNav animated:NO completion:nil];
 }
 #pragma mark --> 代理和数据源方法
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -141,7 +149,6 @@
             oneCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"oneCell"];
         }
         oneCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.oneV = [[OneView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_W, 80)];
         [oneCell.contentView addSubview:self.oneV];
         return oneCell;
         
@@ -152,7 +159,6 @@
             twoCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"twoCell"];
         }
         twoCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.twoV = [[TwoView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_W, 110)];
         [twoCell.contentView addSubview:self.twoV];
         return twoCell;
         
@@ -168,6 +174,7 @@
         titLab.textColor = [UIColor colorWithHexString:@"#333333"];
         titLab.font = BQFONT(16);
         [threeCell.contentView addSubview:titLab];
+        
         //UICollectionViewLayout  --流水布局对象
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
         //设置最小的行间距
@@ -191,6 +198,7 @@
         collectionV.delegate = self;
         //设置数据源
         collectionV.dataSource = self;
+        
         [threeCell.contentView addSubview:collectionV];
         
         return threeCell;
@@ -284,6 +292,19 @@
 }
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
     return 0;
+}
+
+-(OneView *)oneV{
+    if (!_oneV) {
+        _oneV = [[OneView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_W, 80)];
+    }
+    return _oneV;
+}
+-(TwoView *)twoV{
+    if (!_twoV) {
+        _twoV = [[TwoView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_W, 110)];
+    }
+    return _twoV;
 }
 
 -(BecomeVIPDetailModel *)becomeVIPdetailModel{

@@ -67,6 +67,7 @@
 @property(nonatomic,strong)BQSmallCardViewModel *bqViewModel;
 @property(nonatomic,strong)BQSmallCardDetailModel *bqDetailModel;
 @property(nonatomic,strong)NSMutableArray <BQSmallCardDetailModel *>*data;
+
 @property(nonatomic,strong) UIImage *headImg;
 
 @end
@@ -75,26 +76,27 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    // 即将显示 隐藏导航条
-//    self.navigationController.navigationBar.hidden = YES;
-//    [self.navigationController.navigationBar setBackgroundImage:[self imageWithBgColor:[kColorRGB(0, 166, 228)  colorWithAlphaComponent:0] ] forBarMetrics:UIBarMetricsDefault];
-//    self.navigationController.navigationBar.translucent = YES;
+    // tabbar不隐藏
+    self.tabBarController.tabBar.hidden = NO;
     
     if ([User_Default objectForKey:@"myjsession"]) {
         [self netWorkRequest];
-        
-    }else{
-        
-        self.headV.headImg.image = [UIImage imageNamed:@"photo_tourist_nor"];
-        self.headV.nameLab.text = @"未登录";
-        self.headV.textF.text = @" 游客";
-        self.headV.huangGuanImg.image = [UIImage imageNamed:@"vip_my_icon_tourist"];
-        
-        [self.tbv reloadData];
-  
-    }
-}
 
+        self.headV.youKeView.hidden = YES;
+        self.headV.textF.hidden = NO;
+
+    }else{
+        self.headV.textF.hidden = YES;
+        self.headV.youKeView.hidden = NO;
+
+        self.headV.nameLab.text = @"未登录";
+        self.headV.headImg.image = [UIImage imageNamed:@"photo_tourist_nor"];
+
+        [self.tbv reloadData];
+
+    }
+    
+}
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
@@ -104,8 +106,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // tabbar不隐藏
-    self.tabBarController.tabBar.hidden = NO;
     // 防止导航栏下移
     self.extendedLayoutIncludesOpaqueBars = YES;
     self.navigationController.navigationBar.translucent = YES;
@@ -158,19 +158,15 @@
 //    UIGraphicsEndImageContext();
 //    return image;
 //}
-//
 //- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 //    CGFloat dis = scrollView.contentOffset.y;
 //    if(dis > NAVIGATION_BAR_HEIGHT){
 //        [self.navigationController.navigationBar setBackgroundImage:[self imageWithBgColor:[kColorRGB(255, 255, 255)  colorWithAlphaComponent:dis/NAVIGATION_BAR_HEIGHT] ] forBarMetrics:UIBarMetricsDefault];
-//        //                                      translucent:透明的,半透明的
+//                                            translucent:透明的,半透明的
 //        self.navigationController.navigationBar.translucent = NO;
-//
 //        [leftBtn setImage:[UIImage imageNamed:@"nav_install_icon_gray"] forState:UIControlStateNormal];
 //        navTitleLab.textColor = [UIColor grayColor];
 //        [rightBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-//
-//
 //    }
 //    if(dis < NAVIGATION_BAR_HEIGHT)
 //    {
@@ -225,13 +221,13 @@
     UIGraphicsEndImageContext();
     return theImage;
 }
-
 -(void)ChickStatus{
     [GLobalRealReachability reachabilityWithBlock:^(ReachabilityStatus status) {
         if (status != RealStatusNotReachable) {
             if ([User_Default objectForKey:@"myjsession"]) {
                 // 网络请求
                 [self netWorkRequest];
+                
             }else{
                 [self.tbv reloadData];
             }
@@ -242,6 +238,7 @@
         }
     }];
 }
+
 
 -(void)netWorkRequest{
     
@@ -284,9 +281,7 @@
             self.headV.nameLab.text = self.myHomePageDetailModel.name;
             // 是否是会员
             NSString *btnStr = [NSString stringWithFormat:@" %@",self.myHomePageDetailModel.membershipCategoryText];
-//            [self.headV.bgBtn setTitle:btnStr forState:UIControlStateNormal];
             self.headV.textF.text = btnStr;
-//            [self.headV.bgBtn setImage:[UIImage imageNamed:@"vip_my_icon_nor"] forState:UIControlStateNormal];
             self.headV.huangGuanImg.image = [UIImage imageNamed:@"vip_my_icon_nor"];
             // 刷新表格
             [self.tbv reloadData];
@@ -297,12 +292,16 @@
         if ([[myHomePageError.message substringToIndex:5] isEqualToString:@"未登陆错误"]) {
             [User_Default setValue:nil forKey:@"mysession"];
             [self.tbv reloadData];
+//            LoginViewController *loginVC = [[LoginViewController alloc]init];
+//            [self.navigationController pushViewController:loginVC animated:YES];
         }
+        
     }];
     // 我 - 有效课卡
     [self.bqViewModel getBQSmallCardSuccess:^(BingQiuSmallCardModel * bqModel) {
         // 结束刷新
         [self.tbv.mj_header endRefreshing];
+        
         self.data = [NSMutableArray array];
         if (bqModel.success) {
             for (BQSmallCardDetailModel *bqSmallCardDetailModel in bqModel.data) {
@@ -320,78 +319,81 @@
     
 }
 #pragma mark --> 按钮的点击事件
+// 设置按钮
 - (void)leftBtnClick:(UIButton *)leftBtn{
-    
     if ([User_Default objectForKey:@"myjsession"]) {
-        
         SetViewController *setVC = [[SetViewController alloc]init];
         // 将我的界面的学员ID传递到设置界面
         setVC.memId = self.myHomePageDetailModel.titlID;
-        UINavigationController *setNav = [[UINavigationController alloc]initWithRootViewController:setVC];
-        [self presentViewController:setNav animated:NO completion:nil];
-        
+        [self.navigationController pushViewController:setVC animated:YES];
     }else{
-        
         LoginViewController *loginVC = [[LoginViewController alloc]init];
-        [self presentViewController:loginVC animated:NO completion:nil];
+        [self.navigationController pushViewController:loginVC animated:YES];
     }
 }
+// 切换学员按钮
 - (void)rightBtnClick:(UIButton *)rightBtn{
     if ([User_Default objectForKey:@"myjsession"]) {
         ChangeStuViewController *changeStuVC = [[ChangeStuViewController alloc]init];
         // 将我的界面的学员ID传递给切换学员界面
         changeStuVC.memId = self.myHomePageDetailModel.titlID;
-        UINavigationController *changeStuNav = [[UINavigationController alloc]initWithRootViewController:changeStuVC];
-        [self presentViewController:changeStuNav animated:NO completion:nil];
+        [self.navigationController pushViewController:changeStuVC animated:YES];
     }else{
         LoginViewController *loginVC = [[LoginViewController alloc]init];
-        [self presentViewController:loginVC animated:NO completion:nil];
+        [self.navigationController pushViewController:loginVC animated:YES];
     }
 }
+// 跳转学员资料按钮
 - (void)coverBtnClick:(UIButton *)coverBtn{
-    
     if ([User_Default objectForKey:@"myjsession"]) {
-        
         StuInforController *stuInfoVC = [[StuInforController alloc]init];
-        stuInfoVC.headImg = self.headV.headImg.image;
-        //实现回传头像的block
-        stuInfoVC.headerImgBlock = ^(UIImage * _Nonnull img) {
-            self.headV.headImg.image = img;
-            
-            //内存缓存
-            self.headImg = img;
+ 
+        // 弱引用
+        __weak typeof(self) weakself = self;
+        stuInfoVC.imgagBLock = ^(id value) {
+            // 赋值
+            weakself.headV.headImg.image = value;
         };
-        
-        UINavigationController *stuInfoNav = [[UINavigationController alloc]initWithRootViewController:stuInfoVC];
-        [self presentViewController:stuInfoNav animated:YES completion:nil];
-        
+        [self.navigationController pushViewController:stuInfoVC animated:YES];
+ 
+//        stuInfoVC.headImg = self.headV.headImg.image;
+//        //实现回传头像的block
+//        stuInfoVC.headerImgBlock = ^(UIImage * _Nonnull img) {
+//            self.headV.headImg.image = img;
+//            
+//            //内存缓存
+//            self.headImg = img;
+//        };
+//        
+//        UINavigationController *stuInfoNav = [[UINavigationController alloc]initWithRootViewController:stuInfoVC];
+//        [self presentViewController:stuInfoNav animated:YES completion:nil];
     }else{
-        
         LoginViewController *loginVC = [[LoginViewController alloc]init];
-        [self presentViewController:loginVC animated:NO completion:nil];
+        [self.navigationController pushViewController:loginVC animated:YES];
     }
 }
 // 立即开通按钮
 -(void)rigthBtnClick:(UIButton *)ljktBtn{
-    
     if ([User_Default objectForKey:@"myjsession"]) {
         
         if (self.myHomePageDetailModel.vipEndDate) {
             XingQiuViewController *xqVIPVC = [[XingQiuViewController alloc]init];
-            UINavigationController *xqVIPNav = [[UINavigationController alloc]initWithRootViewController:xqVIPVC];
-            [self presentViewController:xqVIPNav animated:NO completion:nil];
-            
+            [self.navigationController pushViewController:xqVIPVC animated:YES];
+//            UINavigationController *xqVIPNav = [[UINavigationController alloc]initWithRootViewController:xqVIPVC];
+//            [self presentViewController:xqVIPNav animated:YES completion:nil];
         }else{
             
             ChengWeiXingQiuVIPViewController *paySuccessVC = [[ChengWeiXingQiuVIPViewController alloc]init];
-            UINavigationController *paySuccessNav = [[UINavigationController alloc]initWithRootViewController:paySuccessVC];
-            [self presentViewController:paySuccessNav animated:NO completion:nil];
+            [self.navigationController pushViewController:paySuccessVC animated:YES];
+//            UINavigationController *paySuccessNav = [[UINavigationController alloc]initWithRootViewController:paySuccessVC];
+//            [self presentViewController:paySuccessNav animated:YES completion:nil];
+            
         }
         
     }else{
         
         LoginViewController *loginVC = [[LoginViewController alloc]init];
-        [self presentViewController:loginVC animated:NO completion:nil];
+        [self.navigationController pushViewController:loginVC animated:YES];
     }
     
 }

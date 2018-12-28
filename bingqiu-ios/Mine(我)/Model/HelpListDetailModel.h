@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HelpListDetailModel : NSObject
 
-@property(nonatomic,strong)NSMutableArray  *helpTypeList;
+@property(nonatomic,strong)NSMutableArray  <HelpTypeListDetailModel *>*helpTypeList;
 @property(nonatomic,copy)NSString *helpTypeText;
 @property(nonatomic,copy)NSString *helpType;
 

@@ -29,6 +29,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    [self.navigationItem setHidesBackButton:YES];
+    
     // 1 设置segmentBar的frame
     self.segmentVC.segmentBar.frame = CGRectMake(0, 0, SCREEN_W, 42);
     self.navigationItem.titleView = self.segmentVC.segmentBar;

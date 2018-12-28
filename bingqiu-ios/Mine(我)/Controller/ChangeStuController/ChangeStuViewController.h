@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ChangeStuViewController : BaseViewController
+@interface ChangeStuViewController : UIViewController
 
 @property(nonatomic,strong)NSNumber *memId;
 

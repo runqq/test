@@ -15,8 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 //请求成功回调block
 typedef void (^requestSuccessBlock)(void);
 @property (nonatomic,copy)requestSuccessBlock successBlock;
-- (instancetype)initWithLoginSuccessBlock:(requestSuccessBlock) successBlock;
 
+- (instancetype)initWithLoginSuccessBlock:(requestSuccessBlock) successBlock;
+@property(nonatomic,assign) NSInteger comefrom;
 @property (nonatomic,copy)requestSuccessBlock  dismissBlock;
 
 

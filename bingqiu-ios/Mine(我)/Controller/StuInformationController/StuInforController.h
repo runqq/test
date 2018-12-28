@@ -12,7 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StuInforController : UIViewController
 
-//声明回传头像的block
+// 定义block
+@property(nonatomic,copy)HMPublicValueChanged imgagBLock;
+////声明回传头像的block
 @property(nonatomic, copy) void(^headerImgBlock)(UIImage *img);
 @property(nonatomic,strong) UIImage *headImg;
 

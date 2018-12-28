@@ -46,6 +46,7 @@
 @property(nonatomic,strong)ChickVerificationCodeViewModel  *chickCodeViewModel;
 @property(nonatomic,strong)ChickVerificationCodeModel *chickCodeModel;
 
+
 @end
 
 @implementation LoginViewController
@@ -59,21 +60,23 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.navigationController.navigationBar.hidden = YES;
+//    self.navigationController.navigationBar.hidden = YES;
     self.tabBarController.tabBar.hidden = YES;
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBar.hidden = NO;
+//    self.navigationController.navigationBar.hidden = NO;
     self.tabBarController.tabBar.hidden = NO;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    // 隐藏系统自带的导航栏返回按钮
+    [self.navigationItem setHidesBackButton:YES];
     
-    
-    [self.view addSubview:self.backBtn];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.backBtn];
+//    [self.view addSubview:self.backBtn];
     [self.view addSubview:self.secretBtn];
     [self.view addSubview:self.verticalLine];
     [self.view addSubview:self.messageBtn];
@@ -105,11 +108,11 @@
 -(void)addLayOut{
     
     __weak typeof(self) weakself = self;
-    [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(weakself.self.view.mas_top).with.offset(35);
-        make.right.equalTo(weakself.self.view.mas_right).with.offset(-15);
-        make.size.mas_equalTo(CGSizeMake(30, 30));
-    }];
+//    [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(weakself.self.view.mas_top).with.offset(35);
+//        make.right.equalTo(weakself.self.view.mas_right).with.offset(-15);
+//        make.size.mas_equalTo(CGSizeMake(30, 30));
+//    }];
     [self.secretBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.self.view.mas_top).with.offset(96);
         make.left.equalTo(weakself.self.view.mas_left).with.offset(35);
@@ -134,6 +137,7 @@
 -(UIButton *)backBtn{
     if (!_backBtn) {
         _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _backBtn.frame = CGRectMake(0, 0, 30, 30);
         [_backBtn setImage:[UIImage imageNamed:@"close_window_30"] forState:UIControlStateNormal];
         [_backBtn addTarget:self action:@selector(closeLoginViewController:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -247,21 +251,22 @@
         if (!self.myloginViewModel.phoneNumber || !self.myloginViewModel.passWordNumber ) {
             [SVProgressHUD showErrorText:@"账号或密码不能为空"];
             [SVProgressHUD dismissWithDelay:1.25];
+            
         }else{
+            
             // 有网,进行网络请求
             [self.myloginViewModel getLoginDataSuccess:^(LoginModel * loginModel) {
                 self.myLoginModel = loginModel;
                 if (self.myLoginModel.success) {
                     // 存储手机号
                     [User_Default setObject:self.passwordV.mobileTF.text forKey:@"myPhoneNumber"];
-                    if (self.successBlock !=nil) {
-                        self.successBlock();
-                    }
-                    // 登录成功以后跳转到报告界面 同时将登录界面dismiss掉
-                    [self dismissViewControllerAnimated:YES completion:nil];
+                    
+//                    if (self.successBlock !=nil) {
+//                        self.successBlock();
+//                    }
+                    [self.navigationController popViewControllerAnimated:YES];
                     
                 }else{
-                    
                     // 失败返回0
                     NSString *str = self.myLoginModel.message;
                     NSArray *arr = [str componentsSeparatedByString:@"Error"];
@@ -270,7 +275,6 @@
                         [SVProgressHUD dismissWithDelay:1.25];
                     }
                 }
-                
             } Failture:^(LoginModel * myLoginModel) {
 //                 [self showErrorText:myLoginModel.message];
             }];
@@ -290,17 +294,14 @@
                 if (chickCodeModel.success) {
                     // 存储手机号
                     [User_Default setObject:self.yanZhengMaV.numberTF.text forKey:@"myPhoneNumber"];
+//                    if (self.successBlock !=nil) {
+//                        self.successBlock();
+//                    }
+                    //设置密码页面
+                    ResetPasswordController *restPasswordVC  = [[ResetPasswordController alloc]init];
+                    [self.navigationController pushViewController:restPasswordVC animated:YES];
                     
-                    if (self.successBlock !=nil) {
-                        self.successBlock();
-                    }
-                    [self dismissViewControllerAnimated:YES completion:^{
-                        //设置密码页面
-                        ResetPasswordController *restPasswordVC = [[ResetPasswordController alloc]init];
-                        [self.navigationController pushViewController:restPasswordVC animated:YES];
-                    }];
                 }else{
-                    
                     //输入验证码错误给出提示
                     NSString *str1 = chickCodeModel.message;
                     NSArray *arr1 = [str1 componentsSeparatedByString:@"Error"];
@@ -320,19 +321,14 @@
 #pragma mark —关闭登录视图方法—
 -(void)closeLoginViewController:(UIButton *)closeBtn{
     
-    [self dismissViewControllerAnimated:YES completion:^{
+    if (self.comefrom) {
         
         if (self.dismissBlock) {
             self.dismissBlock();
         };
-  //  [self dismissViewControllerAnimated:YES completion:nil];
- //         UIViewController *rootVC= [UIApplication sharedApplication].delegate.window.rootViewController;
-//        rootVC.viewcon
-//        [tab setSelectedIndex:1];
-    }];
+    }
     
-//    FindViewController *findVC = [[FindViewController alloc]init];
-//    [self.navigationController pushViewController:findVC animated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
     
 }
 
@@ -386,7 +382,6 @@
 -(void)getVerifyCode:(UIButton *)sender{
     
     if (!self.yzmViewModel.phoneNumber || [self.yzmViewModel.phoneNumber isEqualToString:@""] || self.yzmViewModel.phoneNumber == nil) {
-//        [self showErrorText:@"请输入手机号"];
         [SVProgressHUD showErrorText:@"请输入手机号"];
         [SVProgressHUD dismissWithDelay:1.25];
         
@@ -399,7 +394,6 @@
                 [self TimeReduce];
                 
             }else{
-                
                 //输入验证码错误给出提示
                 NSString *str1 = yzmModel.message;
                 NSArray *arr1 = [str1 componentsSeparatedByString:@"Error"];
@@ -501,5 +495,7 @@
     }
     return _chickCodeModel;
 }
+
+
 
 @end

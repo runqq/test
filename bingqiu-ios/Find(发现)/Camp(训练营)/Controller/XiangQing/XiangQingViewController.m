@@ -130,6 +130,7 @@
     
     [self.xqViewModel getXiangQingWithID:self.ids Success:^(XiangQingModel *  detailModel) {
         if (detailModel.success) {
+            
 //            self.homePageDetailModel.height = homePageModel.data[@"height"];
             self.myDetailModel.dayHours = detailModel.data[@"dayHours"];
             self.myDetailModel.remark = detailModel.data[@"remark"];

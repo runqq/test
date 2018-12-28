@@ -44,15 +44,12 @@
     [super viewWillAppear:animated];
     // 隐藏tabBar
     self.tabBarController.tabBar.hidden = YES;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
 }
-
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     self.navigationController.navigationBar.hidden = NO;
-    // 显示tabBar
-    self.tabBarController.tabBar.hidden = NO;
 }
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -60,11 +57,13 @@
     UILabel  *titLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 18)];
     titLab.text = @"设置";
     // 字体居中
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     titLab.textAlignment = NSTextAlignmentCenter;
     titLab.textColor = [UIColor colorWithHexString:@"#333333"];
     titLab.font = BQBOLDFONT(18);
     self.navigationItem.titleView = titLab;
+    // 导航左侧按钮
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
+    
     // 背景颜色
     self.view.backgroundColor = [UIColor whiteColor];
     
@@ -75,7 +74,7 @@
 
 #pragma mark --> backBtn
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark --> 懒加载
@@ -130,23 +129,6 @@
 // 设置cell内容
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    
-    if (indexPath.section == 3) {
-       
-        UITableViewCell *customCell = [tableView dequeueReusableCellWithIdentifier:@"customCell"];
-        if (!customCell) {
-            customCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"customCell"];
-        }
-        customCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        UILabel *customLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_W, 50)];
-        customLab.text = @"退出当前帐户";
-        customLab.textColor = [UIColor colorWithHexString:@"#333333"];
-        customLab.font = BQBOLDFONT(16);
-        customLab.textAlignment = NSTextAlignmentCenter;
-        [customCell.contentView addSubview:customLab];
-        return customCell;
-    }
-    
     UITableViewCell *oneCell = [tableView dequeueReusableCellWithIdentifier:@"oneCell"];
     if (!oneCell) {
         oneCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"oneCell"];
@@ -173,6 +155,21 @@
             oneCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
+    }else{
+            
+        UITableViewCell *customCell = [tableView dequeueReusableCellWithIdentifier:@"customCell"];
+        if (!customCell) {
+            customCell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"customCell"];
+        }
+        customCell.selectionStyle = UITableViewCellSelectionStyleNone;
+        UILabel *customLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_W, 50)];
+        customLab.text = @"退出当前帐户";
+        customLab.textColor = [UIColor colorWithHexString:@"#333333"];
+        customLab.font = BQBOLDFONT(16);
+        customLab.textAlignment = NSTextAlignmentCenter;
+        [customCell.contentView addSubview:customLab];
+        
+        return customCell;
     }
     
     return oneCell;
@@ -204,8 +201,9 @@
         if (indexPath.row == 0) {
             ChangeStuViewController *changeStuVC = [[ChangeStuViewController alloc]init];
             changeStuVC.memId = self.memId;
-            UINavigationController *changeStuNav = [[UINavigationController alloc]initWithRootViewController:changeStuVC];
-            [self presentViewController:changeStuNav animated:NO completion:nil];
+            [self.navigationController pushViewController:changeStuVC animated:YES];
+//            UINavigationController *changeStuNav = [[UINavigationController alloc]initWithRootViewController:changeStuVC];
+//            [self presentViewController:changeStuNav animated:NO completion:nil];
             
         }else{
             
@@ -239,30 +237,23 @@
             
         }else{
             BQLog(@"您点击了当前版本号这一行");
-            
 //            [self.versionViewModel getBanBenBiJiaoWithVersion:1 Success:^(BanBeBiJiaoModel * _Nonnull banBenModel) {
-//
 //            } Failture:^(BanBeBiJiaoModel * _Nonnull banBenError) {
-//
 //            }];
-            
         }
     }else{
         
         [LoginOut OutSuccess:^(TuiChuLoginModel *  tuichumm) {
-            
             if (tuichumm.success) {
-                
-                [User_Default setValue:nil forKey:@"myjsession"];
+                [User_Default setValue:@"" forKey:@"mysession"];
                 [SVProgressHUD showSuccessText:@"退出成功"];
                 [SVProgressHUD dismissWithDelay:1.25];
-                [self dismissViewControllerAnimated:NO completion:nil];
+                [self.navigationController popViewControllerAnimated:YES];
                 
             }else{
                 // 失败
                 [self showErrorText:tuichumm.message];
             }
-            
         } Failture:^(TuiChuLoginModel *  err_tuichumm) {
             
         }];

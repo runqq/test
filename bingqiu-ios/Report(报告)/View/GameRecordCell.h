@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ZZGradientProgress.h"
-#import "XLCircleProgress.h"
+#import "BQCircleProgress.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -36,7 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong)UILabel *shangChangNum;
 @property(nonatomic,strong)UILabel *shangChangLab;
 
-@property(nonatomic,strong)ZZGradientProgress *circle2;
 @property(nonatomic,strong)UILabel *huaXingJuLiLab;
 @property(nonatomic,strong)UILabel *huaXingJuLiNum;
 
@@ -45,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong)UILabel *growLab;
 @property(nonatomic,strong)UIButton *arrowsBtn;
 
-@property(nonatomic,strong)XLCircleProgress *circle;
+@property(nonatomic,strong)BQCircleProgress *bqCircle;
 
 
 @end

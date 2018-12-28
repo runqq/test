@@ -62,7 +62,7 @@
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:self.backBtn];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     // 网络请求
     [self netWorkRequest];
     // 将表格添加到主视图
@@ -96,8 +96,11 @@
     } Failture:^(GouKaJiLuModel * gkjlError) {
         if ([[gkjlError.message substringFromIndex:5] isEqualToString:@"未登录错误"]) {
             [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
+                
                 LoginViewController *loginVC = [[LoginViewController alloc]init];
-                [self presentViewController:loginVC animated:YES completion:nil];
+                [self.navigationController pushViewController:loginVC animated:YES];
+//                [self presentViewController:loginVC animated:YES completion:nil];
+                
             } Failture:^(TuiChuLoginModel * err_tuichumm) {
                 [self.view showErrorText:err_tuichumm.message];
             }];
@@ -109,7 +112,8 @@
 
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark --> 懒加载

@@ -7,17 +7,24 @@
 //
 
 #import "ResetPasswordController.h"
+
+#import "ChongZhiMiMaModel.h"
+#import "ChongZhiMiMaViewModel.h"
+
 #import "ReportViewController.h"
 #import "FindViewController.h"
 #import "MineViewController.h"
 
 @interface ResetPasswordController ()
 
+@property(nonatomic,strong)UIView *bgView;
 @property(nonatomic,strong)UILabel *titleLab;
 @property(nonatomic,strong)UITextField *textTF;
 @property(nonatomic,strong)UIButton *confirmBtn;
 @property(nonatomic,strong)UILabel  *navTitle;
 
+@property(nonatomic,strong)ChongZhiMiMaModel *resetPassModel;
+@property(nonatomic,strong)ChongZhiMiMaViewModel *resetPassViewModel;
 
 @end
 
@@ -36,17 +43,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
-    
+    self.view.backgroundColor = [UIColor whiteColor];
+    // 隐藏系统自带的返回按钮
+    [self.navigationItem setHidesBackButton:YES];
+    // 导航标题
     self.navigationItem.titleView = self.navTitle;
-    // 导航左侧按钮
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtnClick:)];
     // 导航右侧按钮
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"跳过" style:UIBarButtonItemStyleDone target:self action:@selector(clickRightBtn:)];
     
-    [self.view addSubview:self.titleLab];
-    [self.view addSubview:self.textTF];
-    [self.view addSubview:self.confirmBtn];
+    [self.view addSubview:self.bgView];
+    [self.bgView addSubview:self.titleLab];
+    [self.bgView addSubview:self.textTF];
+    [self.bgView addSubview:self.confirmBtn];
     
     [self setLayOut];
 }
@@ -54,22 +62,29 @@
     
     __weak typeof(self) weakself = self;
     [self.titleLab mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(weakself.view.mas_top).with.offset(NAVIGATION_BAR_HEIGHT + 20);
-        make.left.equalTo(weakself.view.mas_left).with.offset(15);
+        make.top.equalTo(weakself.bgView.mas_top).with.offset(20);
+        make.left.equalTo(weakself.bgView.mas_left).with.offset(15);
     }];
     [self.textTF mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.titleLab.mas_bottom).with.offset(11);
-        make.left.equalTo(weakself.view.mas_left).with.offset(0);
+        make.left.equalTo(weakself.bgView.mas_left).with.offset(0);
         make.size.mas_equalTo(CGSizeMake(SCREEN_W, 50));
     }];
     [self.confirmBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.textTF.mas_bottom).with.offset(40);
-        make.centerX.equalTo(weakself.view.mas_centerX);
+        make.centerX.equalTo(weakself.bgView.mas_centerX);
         make.size.mas_equalTo(CGSizeMake(345, 48));
         
     }];
 }
 #pragma mark --> 懒加载
+-(UIView *)bgView{
+    if (!_bgView) {
+        _bgView = [[UIView alloc]initWithFrame:CGRectMake(0, NAVIGATION_BAR_HEIGHT, SCREEN_W, SCREEN_H - NAVIGATION_BAR_HEIGHT)];
+        _bgView.backgroundColor = [UIColor colorWithHexString:@"#eeeeee"];
+    }
+    return _bgView;
+}
 -(UILabel *)navTitle{
     if (!_navTitle) {
         // 导航标题
@@ -98,7 +113,6 @@
         _textTF = [UITextField new];
         _textTF.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
         _textTF.placeholder = @"8-16位,至少包含数字/字母/字符2种组合";
-        [_textTF addTarget:self action:@selector(passWordChange:) forControlEvents:UIControlEventEditingDidEnd];
         _textTF.textColor = [UIColor colorWithHexString:@"#333333"];
         _textTF.font = BQFONT(16);
         
@@ -106,21 +120,27 @@
         vv.backgroundColor = [UIColor clearColor];
         _textTF.leftView = vv;
         _textTF.leftViewMode = UITextFieldViewModeAlways;
+        
+        UIButton  *clearBtn = [_textTF valueForKey:@"_clearButton"];
+        [clearBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+        [clearBtn setImage:[UIImage imageNamed:@"icon_password_delete"] forState:UIControlStateNormal];
+        _textTF.clearButtonMode = UITextFieldViewModeAlways;
+        
     }
     return _textTF;
 }
 
-+(BOOL)passWordChange:(NSString *)pass{
-    
-    BOOL result = false;
-    if ([pass length] >= 8 && [pass length] <= 16){
-        // 判断长度大于8位后再接着判断是否同时包含数字和字符
-        NSString * regex = @"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$";
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-        result = [pred evaluateWithObject:pass];
-    }
-    return result;
-}
+//+(BOOL)passWordChange:(NSString *)pass{
+//    
+//    BOOL result = false;
+//    if ([pass length] >= 8 && [pass length] <= 16){
+//        // 判断长度大于8位后再接着判断是否同时包含数字和字符
+//        NSString * regex = @"^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$";
+//        NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+//        result = [pred evaluateWithObject:pass];
+//    }
+//    return result;
+//}
 
 -(UIButton *)confirmBtn{
     if (!_confirmBtn) {
@@ -136,57 +156,42 @@
     return _confirmBtn;
 }
 
-// 点击事件
--(void)goBackBtnClick:(UIButton *)send{
+// 跳过按钮的点击事件
+-(void)clickRightBtn:(UIButton *)rightBtn{
     
     NSArray  *viewControllers =  self.navigationController.viewControllers;
     for (UIViewController  *item in viewControllers) {
         if ([item isKindOfClass:[FindViewController class]]) {
-            [self.navigationController  popToViewController:item animated:YES];
-        }else{
-            [self.navigationController popViewControllerAnimated:YES];
+
+            FindViewController *findVC = [[FindViewController alloc]init];
+            findVC.tabBarController.tabBar.hidden = NO;
+            [self.navigationController pushViewController:findVC animated:NO];
+
+        }else if ([item isKindOfClass:[ReportViewController class]]){
+
+            ReportViewController *reportVC = [[ReportViewController alloc]init];
+            reportVC.tabBarController.tabBar.hidden = NO;
+            [self.navigationController pushViewController:reportVC animated:NO];
+
+        }else  if([item isKindOfClass:[MineViewController class]]){
+            
+            MineViewController *mineVC = [[MineViewController alloc]init];
+            mineVC.tabBarController.tabBar.hidden = NO;
+            [self.navigationController pushViewController:mineVC animated:NO];
         }
     }
 }
 
-// 跳过按钮的点击事件
--(void)clickRightBtn:(UIButton *)rightBtn{
-    
-    ReportViewController *reportVC = [[ReportViewController alloc]init];
-    reportVC.tabBarController.tabBar.hidden = NO;
-    [self.navigationController pushViewController:reportVC animated:NO];
-    
-//    NSArray  *viewControllers =  self.navigationController.viewControllers;
-//    for (UIViewController  *item in viewControllers) {
-//        if ([item isKindOfClass:[FindViewController class]]) {
-//
-//            FindViewController *findVC = [[FindViewController alloc]init];
-//            findVC.tabBarController.tabBar.hidden = NO;
-//            [self.navigationController pushViewController:findVC animated:NO];
-//
-//        }else if ([item isKindOfClass:[ReportViewController class]]){
-//
-//            ReportViewController *reportVC = [[ReportViewController alloc]init];
-//            reportVC.tabBarController.tabBar.hidden = NO;
-//            [self.navigationController pushViewController:reportVC animated:NO];
-//
-//        }else  if([item isKindOfClass:[MineViewController class]]){
-//
-//            MineViewController *mineVC = [[MineViewController alloc]init];
-//            mineVC.tabBarController.tabBar.hidden = NO;
-//            [self.navigationController pushViewController:mineVC animated:NO];
-//        }
-//    }
-}
-
 -(void)queDingBtnClick:(UIButton *)deleteBtn{
-    BQLog(@"您点击了确定按钮");
+    
     if (self.textTF.text.length < 8)
     {
         [SVProgressHUD showErrorText:@"8-16位,至少包含数字/字母/字符2种组合"];
         [SVProgressHUD dismissWithDelay:1.25];
+        
         return;
     }
+    
     if (self.textTF.text.length >= 8 && self.textTF.text.length <= 16) {
         //数字条件
         NSRegularExpression *tNumRegularExpression = [NSRegularExpression regularExpressionWithPattern:@"[0-9]" options:NSRegularExpressionCaseInsensitive error:nil];
@@ -202,16 +207,64 @@
                                                                                  options:NSMatchingReportProgress
                                                                                    range:NSMakeRange(0, self.textTF.text.length)];
         if(tNumMatchCount >= 1 && tLetterMatchCount >= 1){
-            [self dismissViewControllerAnimated:YES completion:nil];
-            [SVProgressHUD showSuccessText:@"设置密码成功"];
-            [SVProgressHUD dismissWithDelay:1.25];
+            // 进行的网络解析
+            [self.resetPassViewModel getChongZhiMiMaWithPassword:self.textTF.text  Success:^(ChongZhiMiMaModel * zhongZhiModel) {
+                if (zhongZhiModel.success) {
+                    //                    [self dismissViewControllerAnimated:YES completion:nil];
+                    
+                    NSArray  *viewControllers =  self.navigationController.viewControllers;
+                    for (UIViewController  *item in viewControllers) {
+                        if ([item isKindOfClass:[FindViewController class]]) {
+                            FindViewController *findVC = [[FindViewController alloc]init];
+                            findVC.tabBarController.tabBar.hidden = NO;
+                            [self.navigationController pushViewController:findVC animated:NO];
+                            
+                        }else if ([item isKindOfClass:[ReportViewController class]]){
+                            ReportViewController *reportVC = [[ReportViewController alloc]init];
+                            reportVC.tabBarController.tabBar.hidden = NO;
+                            [self.navigationController pushViewController:reportVC animated:NO];
+                            
+                        }else  if([item isKindOfClass:[MineViewController class]]){
+                            MineViewController *mineVC = [[MineViewController alloc]init];
+                            mineVC.tabBarController.tabBar.hidden = NO;
+                            [self.navigationController pushViewController:mineVC animated:NO];
+                        }
+                    }
+                    
+                    [SVProgressHUD showSuccessText:zhongZhiModel.message];
+                    [SVProgressHUD dismissWithDelay:1.25];
+                    
+                }else{
+                    
+                    [self showErrorText:zhongZhiModel.message];
+                    
+                }
+            } Failture:^(ChongZhiMiMaModel * chongZhiError) {
+                
+            }];
+            
             return;
+            
         }else{
+            
             [SVProgressHUD showErrorText:@"8-16位,至少包含数字/字母/字符2种组合"];
             [SVProgressHUD dismissWithDelay:2];
             return;
         }
     }
 }
+-(ChongZhiMiMaModel *)resetPassModel{
+    if (!_resetPassModel) {
+        _resetPassModel = [[ChongZhiMiMaModel alloc]init];
+    }
+    return _resetPassModel;
+}
+-(ChongZhiMiMaViewModel *)resetPassViewModel{
+    if (!_resetPassViewModel) {
+        _resetPassViewModel = [[ChongZhiMiMaViewModel alloc]init];
+    }
+    return _resetPassViewModel;
+}
+
 
 @end

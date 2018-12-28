@@ -62,25 +62,25 @@
         self.navigationController.interactivePopGestureRecognizer.enabled = NO;
     }
 }
-- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
-{
-
-    //这里我判断的是当前点击的tabBarItem的标题
-    if ([viewController.tabBarItem.title isEqualToString:@"报告"]){
-        if ([User_Default objectForKey:@"myjsession"]) {
-            return YES;
-            
-        }else{
-            LoginViewController *loginVC = [[LoginViewController alloc]init];
+//- (BOOL)tabBarController:(UITabBarController *)tabBarController shouldSelectViewController:(UIViewController *)viewController
+//{
+//    //这里我判断的是当前点击的tabBarItem的标题
+//    if ([viewController.tabBarItem.title isEqualToString:@"报告"]){
+//        if ([User_Default objectForKey:@"myjsession"]) {
+//            return YES;
+//        }else{
+//            LoginViewController *loginVC = [[LoginViewController alloc]init];
+//            
+//            [self.navigationController pushViewController:loginVC animated:YES];
 //            loginVC.dismissBlock = ^{
 //                [self.tab setSelectedIndex:1];
 //            };
-            [self presentViewController:loginVC animated:YES completion:nil];
-            return NO;
-        }
-    }
-    return YES;
-}
+//         //   [self s:loginVC animated:YES completion:nil];
+//            return NO;
+//        }
+//    }
+//    return YES;
+//}
 
 
 @end

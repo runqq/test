@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JiLuKongJieMianView : UIView
 
 @property(nonatomic,strong)UILabel *titleLab;
-
 // 展示自定义View
 -(void)showCustomView:(UIView *)view;
 

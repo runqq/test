@@ -136,6 +136,10 @@
         // 记录当前选中的位置索引
         self.selIndex = indexPath;
         
+//        self.yearStr = yearArr[self.selIndex.row];
+//        NSString *ss =  arr[0] ;
+//        ss = self.yearStr;
+        
         // 当前选择的打勾
         ScreenTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         [cell.yesBtn setImage:[UIImage imageNamed:@"icon_datewindow_state_select"] forState:UIControlStateNormal];
@@ -150,9 +154,11 @@
             if ([dateArr[i] isEqualToString:@""]) {
                 newstr = @"";
                 self.monthStr =  newstr;
+                self.yearStr = @"";
                 [marr addObject:self.monthStr];
             }else if ([dateArr[i] isEqualToString:@"12月"]){
                 newstr = @"12";
+                self.yearStr = @"2018";
                 self.monthStr =  newstr;
                 [marr addObject:self.monthStr];
             }else if ([dateArr[i] isEqualToString:@"11月"]){
@@ -250,9 +256,14 @@
         return;
     }
     [view addSubview:self];
+    
+    self.hidden = NO;
 }
 -(void)dissmissCustomScreenView{
-    [self removeFromSuperview];
+//    [self removeFromSuperview];
+    
+    self.hidden = YES;
+    
 }
 
 

@@ -37,7 +37,7 @@
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     
     // 网络解析
     [self netWorkRequest];
@@ -66,7 +66,8 @@
 
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark --> 懒加载
 -(UILabel *)navTitleLab{

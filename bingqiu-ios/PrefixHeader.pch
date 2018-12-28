@@ -27,6 +27,7 @@
 #import <MJRefresh/MJRefresh.h>
 #import <MJExtension/MJExtension.h>
 #import "HMPublickBlockDefine.h"
+//#import "NullSafe.m"
 #import "SVProgressHUD.h"
 
 #define BQLog(fmt, ...) NSLog((@"[%s[line:%d]] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);

@@ -172,7 +172,7 @@
             for (DetailModel *distanceDetail in myModelDetailMode.distanceList) {
                 [_distanceArr addObject:distanceDetail];
             }
-            BQLog(@"超深之旅:%@",_distanceArr);
+//            BQLog(@"超深之旅:%@",_distanceArr);
         }else{
             self.titlLab.text = @"超神之旅(滑行距离)";
         }
@@ -181,7 +181,7 @@
         
         //UICollectionViewLayout  --流水布局对象
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc]init];
-        layout.estimatedItemSize = CGSizeMake([[UIScreen mainScreen]bounds].size.width, 165);
+//        layout.estimatedItemSize = CGSizeMake([[UIScreen mainScreen]bounds].size.width, 165);
         //设置最小的行间距
         layout.minimumLineSpacing = 0;
         //设置最小的列间距
@@ -223,7 +223,7 @@
             for (DetailModel  *timeModel in myModelDetailMode.secondsList) {
                 [_timeArr addObject:timeModel];
             }
-            BQLog(@"冰场霸主:%@",_timeArr);
+//            BQLog(@"冰场霸主:%@",_timeArr);
             
         }else{
             self.titlLab1.text = @"冰场霸主(上冰时间)";

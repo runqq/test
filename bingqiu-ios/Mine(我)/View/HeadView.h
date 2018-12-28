@@ -20,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong)UITextField *textF;
 @property(nonatomic,strong)UIImageView *huangGuanImg;
 
-@property(nonatomic,strong)UIButton *bgBtn;
+@property(nonatomic,strong)UIView *youKeView;
+
 @property(nonatomic,strong)UIImageView *arrowsImg; // 箭头
 @property(nonatomic,strong)UIButton *coverBtn; // 蒙层Btn
 

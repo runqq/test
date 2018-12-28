@@ -21,11 +21,14 @@
         [self.headBgLab addSubview:self.headImg];
         
         [self.bgView addSubview:self.nameLab];
+        
         [self.bgView addSubview:self.textF];
         [self.bgView addSubview:self.huangGuanImg];
-//        [self.bgView addSubview:self.bgBtn];
+        [self.bgView addSubview:self.youKeView];
+        
         [self.bgView addSubview:self.arrowsImg];
         [self.bgView addSubview:self.coverBtn];
+        
         [self addLayOut];
         
     }
@@ -60,11 +63,12 @@
         make.left.equalTo(weakself.headImg.mas_right).with.offset(12);
         // make.size.mas_equalTo(CGSizeMake(100, 40));
     }];
-//    [self.bgBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(weakself.nameLab.mas_bottom).with.offset(10);
-//        make.left.equalTo(weakself.headImg.mas_right).with.offset(12);
-//      // make.size.mas_equalTo(CGSizeMake(100, 40));
-//    }];
+    [self.youKeView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(weakself.nameLab.mas_bottom).with.offset(10);
+        make.left.equalTo(weakself.headImg.mas_right).with.offset(12);
+         make.size.mas_equalTo(CGSizeMake(60, 20));
+    }];
+    
     [self.arrowsImg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(weakself.mas_bottom).with.offset(-50);
         make.right.equalTo(weakself.mas_right).with.offset(-25);
@@ -129,7 +133,7 @@
         _textF.leftViewMode = UITextFieldViewModeAlways;
         _textF.leftView = self.huangGuanImg;
         [_textF sizeToFit];
-        
+
     }
     return _textF;
 }
@@ -141,28 +145,28 @@
     return _huangGuanImg;
 }
 
--(UIButton *)bgBtn{
-    if (!_bgBtn) {
+-(UIView *)youKeView{
+    if (!_youKeView) {
+        _youKeView = [[UIView alloc]init];
+        _youKeView.layer.masksToBounds = YES;
+        _youKeView.layer.cornerRadius = 5;
+        _youKeView.backgroundColor = [UIColor colorWithHexString:@"#1a93da"];
         
-        _bgBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _bgBtn.backgroundColor = [UIColor colorWithHexString:@"#1a93da"];
-        _bgBtn.layer.masksToBounds = YES;
-        _bgBtn.layer.cornerRadius = 10;
-        _bgBtn.layer.cornerRadius = 8;
-        [_bgBtn setImageEdgeInsets:UIEdgeInsetsMake(0, -2, 0, 0)];
-        [_bgBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 1, 0, 0)];
-//        [_bgBtn setContentEdgeInsets:UIEdgeInsetsMake(0, 5, 0, 0)];
-        _bgBtn.titleLabel.font = BQFONT(18);
-        [_bgBtn setImage:[UIImage imageNamed:@"vip_my_icon_tourist"] forState:UIControlStateNormal];
-        [_bgBtn setTitle:@"游客" forState:UIControlStateNormal];
-        _bgBtn.titleLabel.font = BQFONT(12);
-//        [_bgBtn.titleLabel sizeToFit];
-//        [_bgBtn setTitle:self.crownLab.text forState:UIControlStateNormal];
-        [_bgBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
-        [_bgBtn setTitleEdgeInsets:UIEdgeInsetsMake(-5, 10, 0, 0)];
-//        _bgBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+        UIImageView *huangGuanImg = [[UIImageView alloc]initWithFrame:CGRectMake( 5 , 2, 18, 15)];
+        huangGuanImg.image = [UIImage imageNamed:@"vip_my_icon_tourist"];
+        [_youKeView addSubview:huangGuanImg];
+        
+        UILabel *lab = [[UILabel alloc]initWithFrame:CGRectMake(25, 0, 30, 20)];
+        lab.text = @"游客";
+        lab.textAlignment = NSTextAlignmentCenter;
+        lab.textColor = [UIColor whiteColor];
+        lab.font = BQFONT(12);
+        [_youKeView addSubview:lab];
+        
+        _youKeView.hidden = YES;
+        
     }
-    return _bgBtn;
+    return _youKeView;
 }
 
 -(UIImageView *)arrowsImg{

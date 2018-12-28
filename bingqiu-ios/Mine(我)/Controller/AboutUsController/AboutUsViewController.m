@@ -111,7 +111,6 @@
 -(UITableView *)tbv{
     if (!_tbv) {
         _tbv = [[UITableView alloc]initWithFrame:CGRectMake(0, NAVIGATION_BAR_HEIGHT, SCREEN_W, SCREEN_H - NAVIGATION_BAR_HEIGHT) style:UITableViewStyleGrouped];
-        
         if (@available(iOS 11.0, *)) {
             _tbv.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }else{
@@ -139,11 +138,13 @@
     if (!cell) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    
     cell.textLabel.text = @[@"关注冰上星球微信公众号",@"关注冰上星球微博",@"商务合作"][indexPath.row];
     cell.textLabel.textColor = [UIColor colorWithHexString:@"#333333"];
     cell.textLabel.font = BQBOLDFONT(16);
     
-    cell.detailTextLabel.text = @[@"冰上星球",@"冰上星球",@"yunrui@icestargroup.com"][indexPath.row];
+    cell.detailTextLabel.text = @[@"冰上星球",@"冰上星球",@"bingrui_info@icestargroup.com"][indexPath.row];
     cell.detailTextLabel.textColor = [UIColor colorWithHexString:@"#666666"];
     cell.detailTextLabel.font = BQFONT(16);
     // 右侧箭头
@@ -191,4 +192,23 @@
     }
     return _componay;
 }
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == 0) {
+        
+    }else if (indexPath.row == 1){
+        
+        NSURL *url = [NSURL URLWithString:@"sinaweibo://userinfo?uid=6666435684"];
+        // 如果已经安装了这个应用,就跳转
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url];
+        }else{
+            [SVProgressHUD showErrorText:@"请先安装微博"];
+            [SVProgressHUD dismissWithDelay:1.25];
+        }
+        
+    }else{
+        
+    }
+}
+
 @end

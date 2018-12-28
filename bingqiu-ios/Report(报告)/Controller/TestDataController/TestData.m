@@ -7,6 +7,7 @@
 //
 
 #import "TestData.h"
+#import "JiLuKongJieMianView.h"
 #import "TestDataCell.h"
 #import "ShareViewController.h"
 
@@ -22,6 +23,7 @@
 }
 
 @property(nonatomic,strong)UITableView *tbv;
+@property(nonatomic,strong)JiLuKongJieMianView *kongJieMian;
 
 @property(nonatomic,strong)UIView       *footView;
 @property(nonatomic,strong)UIImageView  *zuoBiaoImg;
@@ -47,6 +49,9 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
     
+    page = 1;
+    size = 2;
+    
     // 网络请求
     [self NetWorkRequest];
     
@@ -55,29 +60,89 @@
 }
 
 -(void)NetWorkRequest{
-    
-    page = 1;
-    size = 10;
+    self.ceShiData = [NSMutableArray array];
     pageNum = @(page);
     sizeNum = @(size);
-    
-    [self.ceShiViewModel getCeShiDataWithPageNum:pageNum pagesize:sizeNum yearStr:@"" MonthStr:@"" Success:^(CeShiDataModel *  ceShiModel) {
-        
-        // 停止刷新
-        [self.tbv.mj_header endRefreshing];
-        self.ceShiData = [NSMutableArray array];
+    [self.ceShiViewModel getCeShiDataWithPageNum:pageNum pagesize:sizeNum yearStr:self.yearss MonthStr:self.monthss Success:^(CeShiDataModel *  ceShiModel) {
         if (ceShiModel.success) {
             for (CeShiDataDetailModel *detailModel in ceShiModel.data) {
                 [self.ceShiData addObject:detailModel];
             }
+            if (self.ceShiData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self.kongJieMian removeFromSuperview];
+            }
             [self.tbv reloadData];
         }
     } Failture:^(CeShiDataModel *  ceShiError) {
-        
+//        [self.view showErrorText:ceShiError.message];
+    }];
+}
+-(void)headerRefresh{
+    
+    self.ceShiData = [NSMutableArray array];
+    self->page = page-1;
+    if (self->page < 1) {
+        self->page = 1;
+    }
+    pageNum = @(page);
+    sizeNum = @(size);
+    [self.ceShiViewModel getCeShiDataWithPageNum:pageNum pagesize:sizeNum yearStr:@"" MonthStr:@"" Success:^(CeShiDataModel *  ceShiModel) {
+        if (ceShiModel.success) {
+            for (CeShiDataDetailModel *detailModel in ceShiModel.data) {
+                [self.ceShiData addObject:detailModel];
+            }
+            // 停止刷新
+            [self.tbv.mj_header endRefreshing];
+            // 判断数组返回的格式是否为零
+            if (self.ceShiData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self.kongJieMian removeFromSuperview];
+            }
+            [self.tbv reloadData];
+        }
+    } Failture:^(CeShiDataModel *  ceShiError) {
+        // 停止刷新
+        [self.tbv.mj_header endRefreshing];
+    }];
+    
+}
+-(void)footRefresh{
+    self.ceShiData = [NSMutableArray array];
+    self->page = self->page+1;
+    pageNum = @(page);
+    sizeNum = @(size);
+    [self.ceShiViewModel getCeShiDataWithPageNum:pageNum pagesize:sizeNum yearStr:@"" MonthStr:@"" Success:^(CeShiDataModel *  ceShiModel) {
+        if (ceShiModel.success) {
+            for (CeShiDataDetailModel *detailModel in ceShiModel.data) {
+                [self.ceShiData addObject:detailModel];
+            }
+            // 停止刷新
+            [self.tbv.mj_footer endRefreshing];
+            if (self.ceShiData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self.kongJieMian removeFromSuperview];
+            }
+            [self.tbv reloadData];
+        }
+    } Failture:^(CeShiDataModel *  ceShiError) {
+        // 停止刷新
+        [self.tbv.mj_footer endRefreshing];
+//        [self.view showErrorText:ceShiError.message];
     }];
 }
 
+
 #pragma mark --> 懒加载
+-(JiLuKongJieMianView *)kongJieMian{
+    if (!_kongJieMian) {
+        _kongJieMian = [[JiLuKongJieMianView alloc]init];
+    }
+    return _kongJieMian;
+}
 -(UITableView *)tbv{
     if (!_tbv) {
         // 初始化表格
@@ -96,7 +161,13 @@
         _tbv.tableFooterView = self.footView;
         // 下拉刷新
         _tbv.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-            [self NetWorkRequest];
+            __weak typeof(self)weakSelf = self;
+            [weakSelf headerRefresh];
+            
+        }];
+        _tbv.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            __weak typeof(self)weakSelf = self;
+            [weakSelf footRefresh];
         }];
         
     }

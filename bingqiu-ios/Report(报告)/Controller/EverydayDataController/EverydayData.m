@@ -7,6 +7,7 @@
 //
 
 #import "EverydayData.h"
+#import "JiLuKongJieMianView.h"
 #import "EverydayDataCell.h"
 #import "ShareViewController.h"
 #import "ShareView.h"
@@ -25,6 +26,7 @@
 }
 
 @property(nonatomic,strong)UITableView  *tbv;
+@property(nonatomic,strong)JiLuKongJieMianView *kongJieMian;
 @property(nonatomic , strong)UILabel    *lineLab;
 
 @property(nonatomic,strong)UIView       *footView;
@@ -36,6 +38,7 @@
 @property(nonatomic,strong)EverydayTrainDetailModel *everyTrainDetailModel;
 @property(nonatomic,strong)EverdayTrainViewModel    *everyTrainViewModel;
 @property(nonatomic,strong)NSMutableArray <EverydayTrainDetailModel *>*everydayData;
+@property(nonatomic,strong)NSMutableArray *Maaaaa;
 
 @end
 
@@ -55,31 +58,30 @@
     [super viewDidLoad];
     // 背景颜色
     self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
-    
+    page = 1;
+    size = 10;
     // 网络请求
     [self NetWorkRequest];
     // 将表格添加到主视图
     [self.view addSubview:self.tbv];
+    self.everydayData = [NSMutableArray array];
     
 }
 
 -(void)NetWorkRequest{
-    
-    page = 1;
-    size = 5;
     pageNum = @(page);
     sizeNum = @(size);
-    self.chaKanVC.yearss = @"";
-    self.chaKanVC.monthss = @"";
-    
-    [self.everyTrainViewModel getEveryDatTrainWithPageNo:pageNum PageSize:sizeNum yearStr:@"" MonthStr:@"" Success:^(EverydayTrainModel * everyDayTrainModel) {
-        
-        // 停止刷新
-        [self.tbv.mj_header endRefreshing];
-        self.everydayData = [NSMutableArray array];
+//    self.chaKanVC.yearss = @"";
+//    self.chaKanVC.monthss = @"";
+    [self.everyTrainViewModel getEveryDatTrainWithPageNo:pageNum PageSize:sizeNum yearStr:self.yearss MonthStr:self.monthss Success:^(EverydayTrainModel * everyDayTrainModel) {
         if (everyDayTrainModel.success) {
             for (EverydayTrainDetailModel *detailModel in everyDayTrainModel.data) {
                 [self.everydayData addObject:detailModel];
+            }
+            if (self.everydayData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self.kongJieMian removeFromSuperview];
             }
             [self.tbv reloadData];
         }
@@ -88,7 +90,74 @@
     }];
 }
 
+-(void)headerRefresh{
+    self->page = page-1;
+    
+    if (self->page < 1) {
+        self->page = 1;
+    }
+    
+    pageNum = @(page);
+    sizeNum = @(size);
+    //    self.chaKanVC.yearss = @"";
+    //    self.chaKanVC.monthss = @"";
+    
+    [self.everyTrainViewModel getEveryDatTrainWithPageNo:pageNum PageSize:sizeNum yearStr:self.yearss MonthStr:self.monthss Success:^(EverydayTrainModel * everyDayTrainModel) {
+        if (everyDayTrainModel.success) {
+            for (EverydayTrainDetailModel *detailModel in everyDayTrainModel.data) {
+                [self.everydayData addObject:detailModel];
+            }
+            // 停止刷新
+            [self.tbv.mj_header endRefreshing];
+            if (self.everydayData.count == 0) {
+                [self.view addSubview:self.kongJieMian];
+            }else{
+                [self.kongJieMian removeFromSuperview];
+            }
+            [self.tbv reloadData];
+        }
+    } Failture:^(EverydayTrainModel * everyDayTrainError) {
+        // 停止刷新
+        [self.tbv.mj_header endRefreshing];
+    }];
+}
+
+-(void)footerRefresh{
+    
+    pageNum = @(page);
+    sizeNum = @(size);
+    //    self.chaKanVC.yearss = @"";
+    //    self.chaKanVC.monthss = @"";
+    
+    self.everydayData = [NSMutableArray array];
+    
+    [self.everyTrainViewModel getEveryDatTrainWithPageNo:pageNum PageSize:sizeNum yearStr:self.yearss MonthStr:self.monthss Success:^(EverydayTrainModel * everyDayTrainModel) {
+        if (everyDayTrainModel.success) {
+            
+            if (everyDayTrainModel.data.count) {
+                for (EverydayTrainDetailModel *detailModel in everyDayTrainModel.data) {
+                    [self.everydayData addObject:detailModel];
+                }
+                self->page++;
+            }
+            // 停止刷新
+            [self.tbv.mj_footer endRefreshing];
+            [self.tbv reloadData];
+            
+        }
+    } Failture:^(EverydayTrainModel * everyDayTrainError) {
+        // 停止刷新
+        [self.tbv.mj_footer endRefreshing];
+    }];
+}
+
 #pragma mark --> 懒加载
+-(JiLuKongJieMianView *)kongJieMian{
+    if (!_kongJieMian) {
+        _kongJieMian = [[JiLuKongJieMianView alloc]init];
+    }
+    return _kongJieMian;
+}
 -(UILabel *)lineLab{
     if (!_lineLab) {
         _lineLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_W, 1)];
@@ -115,7 +184,14 @@
         
         // 下拉刷新
         _tbv.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-            [self NetWorkRequest];
+//            __weak typeof(self) weakself = self;
+//            [weakself headerRefresh];
+//            [weakself NetWorkRequest];
+        }];
+        // 上拉加载
+        _tbv.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+//            __weak typeof(self) weakself = self;
+//            [weakself footerRefresh];
         }];
         
         
@@ -176,7 +252,7 @@
     return 1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-        return self.everydayData.count;
+    return self.everydayData.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -185,8 +261,6 @@
         everydayCell = [[EverydayDataCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"everydayCell"];
     }
     everydayCell.selectionStyle = UITableViewCellSelectionStyleNone;
-    
-//    everydayCell.model= self.everydayData[indexPath.row];
     
     if (self.everydayData.count) {
         everydayCell.dateLab.text = self.everydayData[indexPath.row].startTime;
@@ -227,10 +301,8 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    
     ShareViewController *shareV = [[ShareViewController alloc]init];
     [self.navigationController pushViewController:shareV animated:YES];
-
 }
 
 -(EverydayTrainDetailModel *)everyTrainDetailModel{
@@ -245,12 +317,17 @@
     }
     return _everyTrainViewModel;
 }
--(NSMutableArray<EverydayTrainDetailModel *> *)everydayData{
-    if (!_everydayData) {
-        _everydayData = [NSMutableArray array];
+//-(NSMutableArray<EverydayTrainDetailModel *> *)everydayData{
+//    if (!_everydayData) {
+//        _everydayData = [NSMutableArray array];
+//    }
+//    return _everydayData;
+//}
+-(NSMutableArray *)Maaaaa{
+    if (!_Maaaaa) {
+        _Maaaaa = [NSMutableArray array];
     }
-    return _everydayData;
+    return _Maaaaa;
 }
-
 
 @end

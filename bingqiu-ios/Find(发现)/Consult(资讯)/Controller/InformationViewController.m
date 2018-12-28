@@ -51,8 +51,6 @@
     
     page = 1;
     size = 10;
-    pageNum = @(page);
-    sizeNum = @(size);
     
     //先判断网络状态
     [self ChickStatus];
@@ -73,9 +71,7 @@
 }
 
 -(void)postNet{
-    
     self.data = [NSMutableArray array];
-    
     [self.consultViewModel getsubTitleContestWithSuccess:^(ConsultModel * sultModel) {
         [self.mainTable.mj_header endRefreshing];
         if (sultModel.success) {
@@ -84,7 +80,8 @@
             for (ConsultDetailModel *consultDetaiModel in sultModel.data) {
                 [self.data addObject:consultDetaiModel];
             }
-            [self.mainTable reloadData];   
+            [self.mainTable reloadData];
+            
             ConsultDetailModel *currentModel = [sultModel.data firstObject];
             [self refreshStrategyWithType:currentModel.value];
         }
@@ -93,14 +90,33 @@
         [self.mainTable.mj_header endRefreshing];
     }];
 }
+
+-(void)listRequest{
+    self.data = [NSMutableArray array];
+    [self.consultViewModel getsubTitleContestWithSuccess:^(ConsultModel * sultModel) {
+        [self.mainTable.mj_header endRefreshing];
+        if (sultModel.success) {
+            self.consultArr = sultModel.data;
+            //            BQLog(@"数组返回的个数%@",self.consultArr);
+            for (ConsultDetailModel *consultDetaiModel in sultModel.data) {
+                [self.data addObject:consultDetaiModel];
+            }
+            [self.mainTable reloadData];
+            
+            ConsultDetailModel *currentModel = [sultModel.data firstObject];
+            [self refreshInformationListWithType:currentModel.value];
+        }
+    } Failture:^(ConsultModel *  consultError) {
+        //          BQLog(@"%d",consultError.success);
+        [self.mainTable.mj_header endRefreshing];
+    }];
+}
 //刷新资讯列表数据
 - (void)refreshStrategyWithType:(NSString *)newsClassify {
-    
     self.listData = [NSMutableArray array];
-    
+    pageNum = @(page);
+    sizeNum = @(size);
     [self.listVM getConsultListWithPageNum:pageNum SizeNum:sizeNum NewsClassify:newsClassify Success:^(ConsultListModel * listModel) {
-        
-        [self.mainTable.mj_footer endRefreshing];
         if (listModel.success) {
             self.listData = [[NSMutableArray alloc] initWithArray:listModel.data];
             
@@ -110,7 +126,39 @@
             }else{
                 [self.ziXunKongJieMianView removeFromSuperview];
             }
-            [self.mainTable reloadData];
+            [self.mainTable.mj_footer endRefreshing];
+            
+            // 刷新单个cell时用到的
+            NSIndexSet *indexSet = [[NSIndexSet alloc]initWithIndex:1];
+            [self.mainTable reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+//            [self.mainTable reloadData];
+        }
+    } Failture:^(ConsultListModel * listError) {
+        [self.mainTable.mj_footer endRefreshing];
+    }];
+}
+
+-(void)refreshInformationListWithType:(NSString *)newsClassify {
+    self.listData = [NSMutableArray array];
+    page = page+1;
+    pageNum = @(page);
+    sizeNum = @(size);
+    [self.listVM getConsultListWithPageNum:pageNum SizeNum:sizeNum NewsClassify:newsClassify Success:^(ConsultListModel * listModel) {
+        if (listModel.success) {
+            self.listData = [[NSMutableArray alloc] initWithArray:listModel.data];
+            
+            if (self.listData.count == 0) {
+                [self.view addSubview:self.ziXunKongJieMianView];
+                
+            }else{
+                [self.ziXunKongJieMianView removeFromSuperview];
+            }
+            [self.mainTable.mj_footer endRefreshing];
+            
+            // 注释的这两行代码是 刷新单个cell时用到的
+            NSIndexSet *indexSet = [[NSIndexSet alloc]initWithIndex:1];
+            [self.mainTable reloadSections:indexSet withRowAnimation:UITableViewRowAnimationAutomatic];
+            //            [self.mainTable reloadData];
         }
     } Failture:^(ConsultListModel * listError) {
         [self.mainTable.mj_footer endRefreshing];
@@ -146,6 +194,7 @@
         }];
         // 上拉加载更多
         _mainTable.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+//            [self listRequest];
             [self postNet];
         }];
         

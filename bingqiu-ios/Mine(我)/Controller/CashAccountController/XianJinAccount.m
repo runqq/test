@@ -13,7 +13,6 @@
 #import "AccountDetails.h"
 #import "LoginViewController.h"
 
-#import "AccountTableViewCell.h"
 #import "JiangXueJinTableViewCell.h"
 
 #import "XianJinZhangHuDetailModel.h"
@@ -30,7 +29,6 @@ char* const buttonKey = "arrow_up_cash";
     NSNumber *pageNum;
     NSNumber *sizeNum;
     NSString *accountRecordTypeStr;
-    
     UIImageView *jianTouImg;
 }
 @property(nonatomic,assign) BOOL isOpen; // 用来判断列表是否展开
@@ -61,27 +59,20 @@ char* const buttonKey = "arrow_up_cash";
     [super viewWillDisappear:animated];
     self.tabBarController.tabBar.hidden = NO;
 }
--(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    
-    NSIndexPath * indexrow = [NSIndexPath indexPathForRow:0 inSection:0];
-    [self.typeScreenV.typeScreenTbv selectRowAtIndexPath:indexrow animated:YES scrollPosition:1];
-    
-}
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     // 赋初始值
     self.isOpen = YES;
-    
-    // 导航条背景颜色
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     // 导航标题
     self.navigationItem.titleView = self.titLab;
+    // 导航条背景颜色
+    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     // 导航右侧按钮
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBut];
+    // 背景颜色
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     
     // 检测网络
     [self ChickStatus];
@@ -116,10 +107,7 @@ char* const buttonKey = "arrow_up_cash";
 -(void)getData{
     
     self.xjzhData = [NSMutableArray array];
-    
     [self.xjzhViewModel getXianJinZhangHuWithPageNo:pageNum PageSize:sizeNum accountRecordType:accountRecordTypeStr Success:^(XianJinZhangHuModel * xjzhModel) {
-        // 停止刷新
-        [self.tbv.mj_header endRefreshing];
         
         if (xjzhModel.success == 1) {
             for (XianJinZhangHuDetailModel *detailModel in xjzhModel.data) {
@@ -134,6 +122,9 @@ char* const buttonKey = "arrow_up_cash";
                 [self.kongJieMian removeFromSuperview];
             }
             
+            // 停止刷新
+            [self.tbv.mj_header endRefreshing];
+            
             [self.tbv reloadData];
         }
     } Failture:^(XianJinZhangHuModel * xjzhError) {
@@ -141,7 +132,8 @@ char* const buttonKey = "arrow_up_cash";
             [LoginOut OutSuccess:^(TuiChuLoginModel * tuichumm) {
                 //登录
                 LoginViewController *loginVC = [[LoginViewController alloc]init];
-                [self presentViewController:loginVC animated:NO completion:nil];
+                [self.navigationController pushViewController:loginVC animated:YES];
+//                [self presentViewController:loginVC animated:NO completion:nil];
             } Failture:^(TuiChuLoginModel * err_tuichumm) {
                 //                    [self.view showErrorText:err_tuichumm.message];
             }];
@@ -178,10 +170,15 @@ char* const buttonKey = "arrow_up_cash";
 }
 -(UITableView *)tbv{
     if (!_tbv) {
-        _tbv = [[UITableView alloc]initWithFrame:CGRectMake(0 ,0, SCREEN_W, SCREEN_H) style:UITableViewStyleGrouped];
+        _tbv = [[UITableView alloc]initWithFrame:CGRectMake(0 ,NAVIGATION_BAR_HEIGHT, SCREEN_W, SCREEN_H - TABBAR_BAR_HEIGHT) style:UITableViewStyleGrouped];
         // 分割线样式
         _tbv.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tbv registerClass:[AccountTableViewCell class] forCellReuseIdentifier:@"AccountTableViewCell"];
+        
+        if (@available(iOS 11.0, *)) {
+            _tbv.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }else{
+            self.automaticallyAdjustsScrollViewInsets =  NO;
+        }
         // 设置代理和数据源
         _tbv.delegate=self;
         _tbv.dataSource=self;
@@ -196,9 +193,14 @@ char* const buttonKey = "arrow_up_cash";
 }
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
+// 筛选按钮
 -(void)rightBtn:(UIButton *)lrightBtn{
+    // 默认选中第一行
+    NSIndexPath * indexrow = [NSIndexPath indexPathForRow:0 inSection:0];
+    [self.typeScreenV.typeScreenTbv selectRowAtIndexPath:indexrow animated:YES scrollPosition:1];
     // 显示筛选试图
     [self.typeScreenV showCustomScreenView:self.view];
     
@@ -249,10 +251,12 @@ char* const buttonKey = "arrow_up_cash";
         NSMutableArray *huiZongArr = [HuiZongListDetailModel mj_objectArrayWithKeyValuesArray:self.xjzhData[indexPath.section].accountRecords];
     
         HuiZongListDetailModel *huiZongDetailModel = huiZongArr[indexPath.row];
-    
+        // 消费名称
         twoCell.titLab.text = huiZongDetailModel.name;
+        // 创建时间
         twoCell.subLab.text = huiZongDetailModel.createTime;
-
+    
+        // 金额
         if ([huiZongDetailModel.amountType isEqualToString:@"plus"]) {
             if (huiZongDetailModel.amount.length) {
                 twoCell.moneyLab.text = [NSString stringWithFormat:@"+%@",huiZongDetailModel.amount];
@@ -337,15 +341,17 @@ char* const buttonKey = "arrow_up_cash";
 #pragma mark  - select cell
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-        NSMutableArray *huiZongArr = [HuiZongListDetailModel mj_objectArrayWithKeyValuesArray:self.xjzhData[indexPath.section].accountRecords];
-        HuiZongListDetailModel *huiZongDetailModel = huiZongArr[indexPath.row];
+    NSMutableArray *huiZongArr = [HuiZongListDetailModel mj_objectArrayWithKeyValuesArray:self.xjzhData[indexPath.section].accountRecords];
+    HuiZongListDetailModel *huiZongDetailModel = huiZongArr[indexPath.row];
     
-        AccountDetails *accountDetailVC = [[AccountDetails alloc]init];
-        UINavigationController *accountDetailNav = [[UINavigationController alloc]initWithRootViewController:accountDetailVC];
-        accountDetailVC.strID = huiZongDetailModel.titleID;
-        accountDetailVC.titleStr = huiZongDetailModel.name;
-        accountDetailVC.accountRecordType = huiZongDetailModel.accountRecordType;
-        [self presentViewController:accountDetailNav animated:YES completion:nil];
+    // AccountDetails:这个是跳转以后的详情界面
+    AccountDetails *accountDetailVC = [[AccountDetails alloc]init];
+    UINavigationController *accountDetailNav = [[UINavigationController alloc]initWithRootViewController:accountDetailVC];
+    accountDetailVC.strID = huiZongDetailModel.titleID;
+    accountDetailVC.titleStr = huiZongDetailModel.name;
+    accountDetailVC.accountRecordType = huiZongDetailModel.accountRecordType;
+
+    [self presentViewController:accountDetailNav animated:YES completion:nil];
     
 }
 - (void)buttonPress:(UIButton *)sender//headButton点击

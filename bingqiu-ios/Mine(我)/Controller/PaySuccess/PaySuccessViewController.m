@@ -27,7 +27,7 @@
     // 导航左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back_blue"] style:UIBarButtonItemStyleDone target:self action:@selector(goBackBtn:)];
     // 背景颜色
-    self.view.backgroundColor = [UIColor colorWithHexString:@"#f5f5f5"];
+    self.view.backgroundColor = [UIColor colorWithHexString:@"#ffffff"];
     
     [self.view addSubview:self.paySuccessV];
     [self.view addSubview:self.confirmBtn];
@@ -35,7 +35,8 @@
 }
 #pragma mark --> 自定义按钮点击事件
 -(void)goBackBtn:(UIButton *)backBtn{
-    [self dismissViewControllerAnimated:YES completion:nil];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark --> 懒加载
 -(UILabel *)navTitleLab{
@@ -73,7 +74,8 @@
 }
 -(void)queDingBtn:(UIButton *)send{
     XingQiuViewController *xqVC = [[XingQiuViewController alloc]init];
-    UINavigationController *xqNav = [[UINavigationController alloc]initWithRootViewController:xqVC];
-    [self presentViewController:xqNav animated:NO completion:nil];
+    [self.navigationController pushViewController:xqVC animated:YES];
+//    UINavigationController *xqNav = [[UINavigationController alloc]initWithRootViewController:xqVC];
+//    [self presentViewController:xqNav animated:NO completion:nil];
 }
 @end

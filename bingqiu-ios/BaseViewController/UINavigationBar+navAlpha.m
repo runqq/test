@@ -33,8 +33,8 @@ static char *alview;
 {
     if (!self.alphaView) {
         // 1.添加空的图片给navigationBar
-//        [self setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
-//        self.shadowImage = [UIImage new];
+        [self setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+        self.shadowImage = [UIImage new];
         // 2.创建alphaView
        self.alphaView = [[UIView alloc] initWithFrame:CGRectMake(0, -44, SCREEN_W, 88)];
         self.alphaView.userInteractionEnabled = NO;
@@ -49,7 +49,7 @@ static char *alview;
 
 - (void) resetNavBar{
 
-//    [self setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
+    [self setBackgroundImage:nil forBarMetrics:UIBarMetricsDefault];
     [self.alphaView removeFromSuperview];
     self.alphaView = nil;
 

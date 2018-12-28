@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OneView : UIView
 
+@property(nonatomic,strong)UILabel *topLine;
 @property(nonatomic,strong)UIImageView *photoImg;
 @property(nonatomic,strong)UILabel *nameLab;
 @property(nonatomic,strong)UILabel *subLab;
