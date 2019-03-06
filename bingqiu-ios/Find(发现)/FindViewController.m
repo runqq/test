@@ -7,6 +7,7 @@
 //
 
 #import "FindViewController.h"
+
 #import "LLSegmentBarVC.h"
 #import "Consult(资讯)/Controller/InformationViewController.h"
 #import "Camp(训练营)/Controller/CampViewController.h"
@@ -51,4 +52,5 @@
         config.itemF = BQBOLDFONT(18);
     }];
 }
+
 @end

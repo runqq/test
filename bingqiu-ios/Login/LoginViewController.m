@@ -108,11 +108,7 @@
 -(void)addLayOut{
     
     __weak typeof(self) weakself = self;
-//    [self.backBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(weakself.self.view.mas_top).with.offset(35);
-//        make.right.equalTo(weakself.self.view.mas_right).with.offset(-15);
-//        make.size.mas_equalTo(CGSizeMake(30, 30));
-//    }];
+//MASConstraintMaker第三方约束
     [self.secretBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(weakself.self.view.mas_top).with.offset(96);
         make.left.equalTo(weakself.self.view.mas_left).with.offset(35);
@@ -344,6 +340,7 @@
         self.myloginViewModel.phoneNumber = mobile.text;
     }
 }
+
 // 验证码手机输入框监听
 -(void)numberTFtextChange:(UITextField *)numberTF{
     NSString  *oldStr = numberTF.text;
@@ -356,6 +353,7 @@
         self.yzmViewModel.phoneNumber = numberTF.text;
     }
 }
+
 // 密码监听
 -(void)passwordTFtextChange:(UITextField *)password{
     self.myloginViewModel.passWordNumber = password.text;
@@ -380,13 +378,13 @@
 // 获取验证码按钮的点击事件
 #pragma mark —获取验证码方法—
 -(void)getVerifyCode:(UIButton *)sender{
-    
+
     if (!self.yzmViewModel.phoneNumber || [self.yzmViewModel.phoneNumber isEqualToString:@""] || self.yzmViewModel.phoneNumber == nil) {
         [SVProgressHUD showErrorText:@"请输入手机号"];
         [SVProgressHUD dismissWithDelay:1.25];
-        
+
     }else{
-        
+    
         [self.yzmViewModel getDataWithSuccess:^(YanZhengMaModel *  yzmModel) {
             self.chickCodeViewModel.phoneNumber = self.yzmViewModel.phoneNumber;
             if (yzmModel.success) {
